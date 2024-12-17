@@ -13,15 +13,15 @@ struct DLMResponse: Codable {
 
 // Request model
 struct DLMRequest: Codable {
-    let model: String = "local-model"
-    let messages: [Message]
-    let temperature: Double = 0.1
-    let max_tokens: Int = 64
+    let id: String = "5c58a359-51b4-4b04-940f-8aba48e12f73"
+    let prompt: String
+    let current_state: CurrentState
+    
 
-    struct Message: Codable {
-        let role: String = "user"
-        let content: String
-    }
+}
+
+struct CurrentState: Codable {
+    let bpm: Double
 }
 
 enum DLMCommand {
@@ -80,7 +80,8 @@ struct ProcessingStep: Identifiable, Hashable {
 
 @Observable
 class DLMService {
-    private let baseURL = "http://localhost:8080/v1/chat/completions"
+    private let baseURL = "http://backend.compiler.inc/function-call"
+    private let authToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0LXVzZXIiLCJpYXQiOjE3MzQ0MDEwNTksImV4cCI6MTczNDQwNDY1OX0.9NDKQuukKCK__oO5KqMAgXGsM2Gomim4RffF-ecBSHw"
     var processingSteps: [ProcessingStep] = []
     var manualCommand: String?
 
@@ -95,21 +96,49 @@ class DLMService {
     }
 
     func processCommand(_ content: String) async throws -> DLMResponse {
-        print("Processing command: \(content)")
+        print("🚀 Starting processCommand with content: \(content)")
+        
         guard let url = URL(string: baseURL) else {
+            print("❌ Invalid URL: \(baseURL)")
             throw URLError(.badURL)
         }
+        print("✅ URL created: \(url)")
 
-        let request = DLMRequest(messages: [.init(content: content)])
+        let request = DLMRequest(
+            prompt: content,
+            current_state: CurrentState(bpm: 1) // You might want to get this from metronome
+        )
+        
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = "POST"
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        urlRequest.httpBody = try JSONEncoder().encode(request)
+        urlRequest.setValue("Bearer \(authToken)", forHTTPHeaderField: "Authorization")
+        
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = .prettyPrinted
+        let jsonData = try encoder.encode(request)
+        urlRequest.httpBody = jsonData
+        
+        print("📤 Request Headers:", urlRequest.allHTTPHeaderFields ?? [:])
+        print("📦 Request Body:", String(data: jsonData, encoding: .utf8) ?? "nil")
+        
         addStep("Sending request to DLM")
-        let (data, _) = try await URLSession.shared.data(for: urlRequest)
-        let response = try JSONDecoder().decode(DLMResponse.self, from: data)
+        print("⏳ Starting network request...")
+        
+        let (data, response) = try await URLSession.shared.data(for: urlRequest)
+        
+        print("📥 Response received")
+        if let httpResponse = response as? HTTPURLResponse {
+            print("📊 Status code: \(httpResponse.statusCode)")
+            print("🔍 Response headers: \(httpResponse.allHeaderFields)")
+        }
+        print("📄 Response body: \(String(data: data, encoding: .utf8) ?? "nil")")
+        
+        let response2 = try JSONDecoder().decode(DLMResponse.self, from: data)
+        print("✅ Decoded response: \(response2)")
+
         completeLastStep()
-        return response
+        return response2
     }
 
     func executeCommands(_ commands: [String], metronome: Metronome) async throws {

@@ -8,7 +8,6 @@ class Metronome {
     let engine = AudioEngine()
     let sampler = AppleSampler()
 
-    @DLMAble
     var tempo = 120.0 {
         didSet {
             sequencer.tempo = tempo
@@ -24,7 +23,6 @@ class Metronome {
     let mixer = Mixer()
     let sequencer = Sequencer()
 
-    @DLMAble
     func setTempo(bpm: Double, bars: Int) {
 
     }
