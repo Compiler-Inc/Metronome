@@ -1,68 +1,66 @@
 import Foundation
+import AudioKit
 
 // Response model
-struct DLMResponse: Codable {
-    let function_calls: [String]
-
-    func cleanedFunctionCalls() -> [String] {
-        return function_calls.map { call in
-            call.trimmingCharacters(in: .init(charactersIn: "\""))
-        }
-    }
+struct DLMCommand: Codable {
+    let command: String
+    let args: CommandArgs?
 }
 
-// Request model
-struct DLMRequest: Codable {
-    let id: String = "5c58a359-51b4-4b04-940f-8aba48e12f73"
-    let prompt: String
-    let current_state: CurrentState
-    
-
+struct CommandArgs: Codable {
+    let bpm: Double?
+    let duration: Double?
+    let sound: String?
+    let count: Int?
 }
 
 struct CurrentState: Codable {
     let bpm: Double
 }
+// Request model
+struct DLMRequest: Codable {
+    let id: String = "5147f591-70ce-4d17-901e-664ffe24f77a"
+    let prompt: String
+    let current_state: CurrentState
+}
 
-enum DLMCommand {
-    case start
+enum MetronomeCommand {
+    case play
     case stop
     case setTempo(bpm: Double)
+    case rampTempo(bpm: Double, duration: Double)
+    case changeSound(sound: String)
+    case setDownBeat(sound: String)
+    case setUpBeat(sound: String)
+    case setGapMeasures(count: Int)
     case noOp
 
-    static func parse(_ functionCall: String) -> DLMCommand? {
-        print("🔍 Parsing function call: \(functionCall)")
-        let cleaned = functionCall.trimmingCharacters(in: .init(charactersIn: "\""))
-        print("🧹 Cleaned function call: \(cleaned)")
-        
-        let components = cleaned.split(separator: " ").map(String.init)
-        print("📦 Components: \(components)")
-        
-        guard let function = components.first else {
-            print("❌ No function found in components")
-            return nil
-        }
-
-        switch function {
-        case "start":
-            print("✅ Parsed start command")
-            return .start
+    static func from(_ command: DLMCommand) -> MetronomeCommand? {
+        switch command.command {
+        case "play":
+            return .play
         case "stop":
-            print("✅ Parsed stop command")
             return .stop
         case "setTempo":
-            guard components.count == 2,
-                  let bpm = Double(components[1]) else {
-                print("❌ Invalid setTempo format or BPM value")
-                return nil
-            }
-            print("✅ Parsed setTempo command with BPM: \(bpm)")
+            guard let bpm = command.args?.bpm else { return nil }
             return .setTempo(bpm: bpm)
-        case "noOp":
-            print("✅ Parsed noOp command")
-            return .noOp
+        case "rampTempo":
+            guard let bpm = command.args?.bpm else { return nil }
+            guard let duration = command.args?.duration else { return nil }
+            return .rampTempo(bpm: bpm, duration: duration)
+        case "changeSound":
+            guard let sound = command.args?.sound else { return nil }
+            return .changeSound(sound: sound)
+        case "setDownBeat":
+            guard let sound = command.args?.sound else { return nil }
+            return .setDownBeat(sound: sound)
+        case "setUpBeat":
+            guard let sound = command.args?.sound else { return nil }
+            return .setUpBeat(sound: sound)
+        case "setGapMeasures":
+            guard let count = command.args?.count else { return nil }
+            return .setGapMeasures(count: count)
         default:
-            print("❌ Unknown command: \(function)")
             return nil
         }
     }
@@ -81,7 +79,8 @@ struct ProcessingStep: Identifiable, Hashable {
 @Observable
 class DLMService {
     private let baseURL = "http://backend.compiler.inc/function-call"
-    private let authToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0LXVzZXIiLCJpYXQiOjE3MzQ0MDEwNTksImV4cCI6MTczNDQwNDY1OX0.9NDKQuukKCK__oO5KqMAgXGsM2Gomim4RffF-ecBSHw"
+    private let apiKey = "890a192daeeb1bf8aa9abd11fc17c605399b0a5e708ef0c971f29e47a9cba20e"
+    private let appId = ""
     var processingSteps: [ProcessingStep] = []
     var manualCommand: String?
 
@@ -95,7 +94,7 @@ class DLMService {
         }
     }
 
-    func processCommand(_ content: String) async throws -> DLMResponse {
+    func processCommand(_ content: String, for metro: Metronome) async throws -> [DLMCommand] {
         print("🚀 Starting processCommand with content: \(content)")
         
         guard let url = URL(string: baseURL) else {
@@ -106,13 +105,13 @@ class DLMService {
 
         let request = DLMRequest(
             prompt: content,
-            current_state: CurrentState(bpm: 1) // You might want to get this from metronome
+            current_state: CurrentState(bpm: metro.tempo)
         )
         
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = "POST"
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        urlRequest.setValue("Bearer \(authToken)", forHTTPHeaderField: "Authorization")
+        urlRequest.setValue(apiKey, forHTTPHeaderField: "x-api-key")
         
         let encoder = JSONEncoder()
         encoder.outputFormatting = .prettyPrinted
@@ -134,48 +133,80 @@ class DLMService {
         }
         print("📄 Response body: \(String(data: data, encoding: .utf8) ?? "nil")")
         
-        let response2 = try JSONDecoder().decode(DLMResponse.self, from: data)
-        print("✅ Decoded response: \(response2)")
-
-        completeLastStep()
-        return response2
+        print("Attempting to decode: \(String(data: data, encoding: .utf8) ?? "nil")")
+        do {
+            let commands = try JSONDecoder().decode([DLMCommand].self, from: data)
+            print("✅ Decoded response: \(commands)")
+            return commands
+        } catch {
+            print("❌ Decoding error: \(error)")
+            throw error
+        }
     }
 
-    func executeCommands(_ commands: [String], metronome: Metronome) async throws {
+    func executeCommands(_ commands: [DLMCommand], metronome: Metronome) async throws {
         addStep("Executing commands")
         print("🎯 DLM executing commands: \(commands)")
         completeLastStep()
-
-        let cleanedCommands = DLMResponse(function_calls: commands).cleanedFunctionCalls()
-        print("🧹 Cleaned commands: \(cleanedCommands)")
         
-        for command in cleanedCommands {
+        for command in commands {
             print("⚡️ Processing command: \(command)")
-            guard let dlmCommand = DLMCommand.parse(command) else {
+            guard let metronomeCommand = MetronomeCommand.from(command) else {
                 print("❌ Failed to parse command: \(command)")
                 continue
             }
-            print("✅ Parsed command: \(dlmCommand)")
+            print("✅ Parsed command: \(metronomeCommand)")
 
-            switch dlmCommand {
-            case .start:
+            switch metronomeCommand {
+            case .play:
                 addStep("Starting metronome")
-                print("▶️ Starting metronome sequencer")
                 metronome.sequencer.play()
                 completeLastStep()
 
             case .stop:
                 addStep("Stopping metronome")
-                print("⏹️ Stopping metronome sequencer")
                 metronome.sequencer.stop()
                 completeLastStep()
 
             case .setTempo(let bpm):
                 addStep("Setting tempo to \(bpm) BPM")
-                print("🎼 Setting tempo to \(bpm) BPM")
                 metronome.tempo = bpm
                 completeLastStep()
 
+            case .rampTempo(let bpm, let duration):
+                addStep("Ramping tempo to \(bpm) BPM over \(duration) seconds")
+                metronome.rampTempo(bpm: bpm, duration: duration)
+                completeLastStep()
+
+            case .changeSound(let sound):
+                addStep("Setting sound to \(sound)")
+                let s = GiantSound.allCases.first(where: {$0.description == sound})
+                if let note = s?.rawValue {
+                    metronome.note = MIDINoteNumber(note)
+                }
+                completeLastStep()
+      
+            case .setDownBeat(let sound):
+                addStep("Setting downbeat to \(sound)")
+                let s = GiantSound.allCases.first(where: {$0.description == sound})
+                if let note = s?.rawValue {
+                    metronome.startingNote = MIDINoteNumber(note)
+                }
+                completeLastStep()
+
+            case .setUpBeat(let sound):
+                addStep("Setting upbeat to \(sound)")
+                let s = GiantSound.allCases.first(where: {$0.description == sound})
+                if let note = s?.rawValue {
+                    metronome.accentNote = MIDINoteNumber(note)
+                }
+                completeLastStep()
+
+            case .setGapMeasures(let count):
+                addStep("Setting gap measures to \(count)")
+                metronome.gapMeasureCount = count
+                completeLastStep()
+            
             case .noOp:
                 addStep("NoOp")
                 print("⚪️ NoOp command received")

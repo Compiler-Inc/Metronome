@@ -2,9 +2,17 @@ import SwiftUI
 
 struct DLMView: View {
     @Binding var metronome: Metronome
-    @Binding var dlm: DLMService
-    @Binding var realtimeTranscript: String
-    @Binding var isProcessingAudioCommands: Bool
+    @State var deepgram = DeepgramService.shared
+    @State var dlm = DLMService()
+    
+    @State private var audioFileTranscript: String = ""
+    @State private var promptTranscript: String = ""
+    @State private var dlmResponse: String = ""
+    @State private var isProcessingDLM = false
+    @State private var realtimeTranscript: String = ""
+    @State private var realtimeTranscriptBuffer: String = ""
+    @State private var isProcessingAudioCommands = false
+    @State private var processingSteps: [String] = []
 
     var body: some View {
         VStack(spacing: 4) {
@@ -32,8 +40,8 @@ struct DLMView: View {
 
                 Button(action: {
                     Task {
-                        guard let commands = try? await dlm.processCommand(dlm.manualCommand ?? "") else { return }
-                        try await dlm.executeCommands(commands.function_calls, metronome: metronome)
+                        guard let commands = try? await dlm.processCommand(dlm.manualCommand ?? "", for: metronome) else { return }
+                        try await dlm.executeCommands(commands, metronome: metronome)
                     }
                 }) {
                     HStack {
@@ -85,5 +93,40 @@ struct DLMView: View {
         }
         .frame(width: 200)
         .background(DLMColors.primary10)
+        .onAppear {
+            setupTranscriptionHandlers()
+        }
+    }
+    
+    private func setupTranscriptionHandlers() {
+        
+        deepgram.onTranscriptReceived = { transcript in
+            Task { @MainActor in
+                if !realtimeTranscriptBuffer.isEmpty {
+                    realtimeTranscriptBuffer += " "
+                }
+                realtimeTranscriptBuffer += transcript
+                realtimeTranscript = realtimeTranscriptBuffer
+            }
+        }
+        
+        deepgram.onTranscriptionComplete = {
+            Task { @MainActor in
+                isProcessingAudioCommands = true
+                
+                do {
+                    guard realtimeTranscript != "" else { return }
+                    let response = try await dlm.processCommand(realtimeTranscript, for: metronome)
+                    try await dlm.executeCommands(response, metronome: metronome)
+                    guard let commands = try? await dlm.processCommand(realtimeTranscriptBuffer ?? "", for: metronome) else { return }
+                    try await dlm.executeCommands(commands, metronome: metronome)
+                    realtimeTranscript = ""
+                    realtimeTranscriptBuffer = ""
+                } catch {
+                    dlm.processingSteps.append(ProcessingStep(text: "Error: \(error.localizedDescription)", isComplete: true))
+                }
+                isProcessingAudioCommands = false
+            }
+        }
     }
 }
