@@ -9,7 +9,7 @@ struct DLMCommand: Codable {
 
 // Request model
 struct DLMRequest: Codable {
-    let id: String = "1561de0c-8e1c-4ace-a870-ac0baecf40f6"
+    let id: String
     let prompt: String
     let current_state: CurrentState
 }
@@ -30,6 +30,7 @@ class DLMService {
         print("✅ URL created: \(url)")
 
         let request = DLMRequest(
+            id: "1561de0c-8e1c-4ace-a870-ac0baecf40f6",
             prompt: content,
             current_state: CurrentState(bpm: metro.tempo)
         )
