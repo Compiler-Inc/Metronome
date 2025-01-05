@@ -42,6 +42,7 @@ struct DLMView: View {
                     Task {
                         metronome.addStep("Sending request to DLM")
                         guard let commands = try? await dlm.processCommand(dlm.manualCommand ?? "", for: metronome) else { return }
+                        metronome.completeLastStep()
                         metronome.executeCommands(commands)
                     }
                 }) {

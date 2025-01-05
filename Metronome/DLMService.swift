@@ -118,8 +118,6 @@ class DLMService {
         
         let (data, response) = try await URLSession.shared.data(for: urlRequest)
 
-        completeLastStep()
-
         print("📥 Response received")
         if let httpResponse = response as? HTTPURLResponse {
             print("📊 Status code: \(httpResponse.statusCode)")
