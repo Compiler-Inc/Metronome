@@ -13,7 +13,6 @@ struct DLMRequest: Codable {
     let current_state: CurrentState
 }
 
-@Observable
 class DLMService {
     private let baseURL = "https://backend.compiler.inc/function-call"
     private let apiKey: String
