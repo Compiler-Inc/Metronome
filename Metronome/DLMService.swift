@@ -19,7 +19,7 @@ struct CurrentState: Codable {
 }
 // Request model
 struct DLMRequest: Codable {
-    let id: String = "5147f591-70ce-4d17-901e-664ffe24f77a"
+    let id: String = "1561de0c-8e1c-4ace-a870-ac0baecf40f6"
     let prompt: String
     let current_state: CurrentState
 }
@@ -79,7 +79,7 @@ struct ProcessingStep: Identifiable, Hashable {
 @Observable
 class DLMService {
     private let baseURL = "http://backend.compiler.inc/function-call"
-    private let apiKey = "890a192daeeb1bf8aa9abd11fc17c605399b0a5e708ef0c971f29e47a9cba20e"
+    private let apiKey = "371f0e448174ad84a4cfd0af924a1b1638bdf99cfe8e91ad2b1c23df925cb8a1"
     private let appId = ""
     var processingSteps: [ProcessingStep] = []
     var manualCommand: String?
