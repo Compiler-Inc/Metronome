@@ -23,7 +23,7 @@ class DLMService {
         self.appId = appId
     }
 
-    func processCommand<State: Encodable>(_ content: String, for state: State) async throws -> [DLMCommand<CommandArgs>] {
+    func processCommand<State: Encodable, Args: Decodable>(_ content: String, for state: State) async throws -> [DLMCommand<Args>] {
         print("🚀 Starting processCommand with content: \(content)")
         
         guard let url = URL(string: baseURL) else {
@@ -65,7 +65,7 @@ class DLMService {
         
         print("Attempting to decode: \(String(data: data, encoding: .utf8) ?? "nil")")
         do {
-            let commands = try JSONDecoder().decode([DLMCommand<CommandArgs>].self, from: data)
+            let commands = try JSONDecoder().decode([DLMCommand<Args>].self, from: data)
             print("✅ Decoded response: \(commands)")
             return commands
         } catch {
