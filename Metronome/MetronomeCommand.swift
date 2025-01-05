@@ -1,5 +1,5 @@
 
-enum MetronomeCommand {
+enum MetronomeCommand: Sendable {
     case play
     case stop
     case setTempo(bpm: Double)

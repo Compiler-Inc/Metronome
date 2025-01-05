@@ -253,13 +253,13 @@ extension Metronome {
     }
 }
 
-struct CommandArgs: Codable {
+struct CommandArgs: Codable, Sendable {
     let bpm: Double?
     let duration: Double?
     let sound: String?
     let count: Int?
 }
 
-struct CurrentState: Codable {
+struct CurrentState: Codable, Sendable {
     let bpm: Double
 }
