@@ -180,7 +180,7 @@ extension Metronome {
 
 extension Metronome {
 
-    func executeCommands(_ commands: [DLMCommand]) {
+    func executeCommands(_ commands: [DLMCommand<CommandArgs>]) {
         addStep("Executing commands")
         print("🎯 DLM executing commands: \(commands)")
         completeLastStep()

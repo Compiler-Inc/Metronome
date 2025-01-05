@@ -1,9 +1,9 @@
 import Foundation
 
 // Response model
-struct DLMCommand: Decodable {
+struct DLMCommand<Args: Decodable>: Decodable {
     let command: String
-    let args: CommandArgs?
+    let args: Args?
 }
 
 // Request model
@@ -23,7 +23,7 @@ class DLMService {
         self.appId = appId
     }
 
-    func processCommand<State: Encodable>(_ content: String, for state: State) async throws -> [DLMCommand] {
+    func processCommand<State: Encodable>(_ content: String, for state: State) async throws -> [DLMCommand<CommandArgs>] {
         print("🚀 Starting processCommand with content: \(content)")
         
         guard let url = URL(string: baseURL) else {
@@ -65,7 +65,7 @@ class DLMService {
         
         print("Attempting to decode: \(String(data: data, encoding: .utf8) ?? "nil")")
         do {
-            let commands = try JSONDecoder().decode([DLMCommand].self, from: data)
+            let commands = try JSONDecoder().decode([DLMCommand<CommandArgs>].self, from: data)
             print("✅ Decoded response: \(commands)")
             return commands
         } catch {

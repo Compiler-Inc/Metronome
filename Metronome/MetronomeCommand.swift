@@ -10,7 +10,7 @@ enum MetronomeCommand: Sendable {
     case setGapMeasures(count: Int)
     case noOp
 
-    static func from(_ command: DLMCommand) -> MetronomeCommand? {
+    static func from(_ command: DLMCommand<CommandArgs>) -> MetronomeCommand? {
         switch command.command {
         case "play":
             return .play
