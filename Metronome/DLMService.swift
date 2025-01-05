@@ -78,7 +78,7 @@ struct ProcessingStep: Identifiable, Hashable {
 
 @Observable
 class DLMService {
-    private let baseURL = "http://backend.compiler.inc/function-call"
+    private let baseURL = "https://backend.compiler.inc/function-call"
     private let apiKey = "371f0e448174ad84a4cfd0af924a1b1638bdf99cfe8e91ad2b1c23df925cb8a1"
     private let appId = ""
     var processingSteps: [ProcessingStep] = []
