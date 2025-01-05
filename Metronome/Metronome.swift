@@ -252,3 +252,14 @@ extension Metronome {
         print("✨ Finished executing all commands")
     }
 }
+
+struct CommandArgs: Codable {
+    let bpm: Double?
+    let duration: Double?
+    let sound: String?
+    let count: Int?
+}
+
+struct CurrentState: Codable {
+    let bpm: Double
+}

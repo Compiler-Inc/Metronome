@@ -7,16 +7,6 @@ struct DLMCommand: Codable {
     let args: CommandArgs?
 }
 
-struct CommandArgs: Codable {
-    let bpm: Double?
-    let duration: Double?
-    let sound: String?
-    let count: Int?
-}
-
-struct CurrentState: Codable {
-    let bpm: Double
-}
 // Request model
 struct DLMRequest: Codable {
     let id: String = "1561de0c-8e1c-4ace-a870-ac0baecf40f6"
