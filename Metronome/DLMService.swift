@@ -24,17 +24,6 @@ struct DLMRequest: Codable {
     let current_state: CurrentState
 }
 
-
-struct ProcessingStep: Identifiable, Hashable {
-    let id = UUID()
-    let text: String
-    var isComplete: Bool
-
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
-    }
-}
-
 @Observable
 class DLMService {
     private let baseURL = "http://backend.compiler.inc/function-call"
