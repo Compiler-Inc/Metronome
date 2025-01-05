@@ -1,4 +1,5 @@
 import SwiftUI
+import CompilerSwiftAI
 
 struct DLMView: View {
     @Binding var metronome: Metronome

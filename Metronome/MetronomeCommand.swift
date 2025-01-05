@@ -1,3 +1,4 @@
+import CompilerSwiftAI
 
 enum MetronomeCommand: Sendable {
     case play

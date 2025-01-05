@@ -1,6 +1,7 @@
 import AudioKit
 import AudioKitEX
 import SwiftUI
+import CompilerSwiftAI
 
 @Observable
 class Metronome {
