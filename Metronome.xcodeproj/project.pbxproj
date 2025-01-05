@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		290B2CEB2D2A03D300F52581 /* CompilerSwiftAI in Frameworks */ = {isa = PBXBuildFile; productRef = 290B2CEA2D2A03D300F52581 /* CompilerSwiftAI */; };
 		F181AA312D0A4A94006E3941 /* SoundpipeAudioKit in Frameworks */ = {isa = PBXBuildFile; productRef = F181AA302D0A4A94006E3941 /* SoundpipeAudioKit */; };
 /* End PBXBuildFile section */
 
@@ -70,6 +71,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F181AA312D0A4A94006E3941 /* SoundpipeAudioKit in Frameworks */,
+				290B2CEB2D2A03D300F52581 /* CompilerSwiftAI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -139,6 +141,7 @@
 			name = Metronome;
 			packageProductDependencies = (
 				F181AA302D0A4A94006E3941 /* SoundpipeAudioKit */,
+				290B2CEA2D2A03D300F52581 /* CompilerSwiftAI */,
 			);
 			productName = Metronome;
 			productReference = F181A9FB2D093CED006E3941 /* Metronome.app */;
@@ -224,6 +227,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				F181AA2E2D093D72006E3941 /* XCRemoteSwiftPackageReference "SoundpipeAudioKit" */,
+				290B2CE92D2A03D300F52581 /* XCRemoteSwiftPackageReference "CompilerSwiftAI" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = F181A9FC2D093CED006E3941 /* Products */;
@@ -637,6 +641,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		290B2CE92D2A03D300F52581 /* XCRemoteSwiftPackageReference "CompilerSwiftAI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Compiler-Inc/CompilerSwiftAI";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
 		F181AA2E2D093D72006E3941 /* XCRemoteSwiftPackageReference "SoundpipeAudioKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/AudioKit/SoundpipeAudioKit.git";
@@ -648,6 +660,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		290B2CEA2D2A03D300F52581 /* CompilerSwiftAI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 290B2CE92D2A03D300F52581 /* XCRemoteSwiftPackageReference "CompilerSwiftAI" */;
+			productName = CompilerSwiftAI;
+		};
 		F181AA302D0A4A94006E3941 /* SoundpipeAudioKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = F181AA2E2D093D72006E3941 /* XCRemoteSwiftPackageReference "SoundpipeAudioKit" */;
