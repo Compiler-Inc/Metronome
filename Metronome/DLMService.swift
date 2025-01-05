@@ -17,8 +17,13 @@ struct DLMRequest: Codable {
 @Observable
 class DLMService {
     private let baseURL = "https://backend.compiler.inc/function-call"
-    private let apiKey = "371f0e448174ad84a4cfd0af924a1b1638bdf99cfe8e91ad2b1c23df925cb8a1"
-    private let appId = ""
+    private let apiKey: String
+    private let appId: String
+
+    public init(apiKey: String, appId: String) {
+        self.apiKey = apiKey
+        self.appId = appId
+    }
 
     func processCommand(_ content: String, for metro: Metronome) async throws -> [DLMCommand] {
         print("🚀 Starting processCommand with content: \(content)")
@@ -30,7 +35,7 @@ class DLMService {
         print("✅ URL created: \(url)")
 
         let request = DLMRequest(
-            id: "1561de0c-8e1c-4ace-a870-ac0baecf40f6",
+            id: appId,
             prompt: content,
             current_state: CurrentState(bpm: metro.tempo)
         )
