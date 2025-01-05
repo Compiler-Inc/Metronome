@@ -1,7 +1,7 @@
 import Foundation
 
 // Response model
-struct DLMCommand: Codable {
+struct DLMCommand: Decodable {
     let command: String
     let args: CommandArgs?
 }
