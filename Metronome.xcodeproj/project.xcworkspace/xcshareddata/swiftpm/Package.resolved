@@ -1,5 +1,5 @@
 {
-  "originHash" : "92cb67ed50d54e0cae3210a874d036ba92736681357123ca46d95aac55b064d3",
+  "originHash" : "a32647e215124ff989e627c2df3893097a797936fad476bbaaebdf7b26bfd331",
   "pins" : [
     {
       "identity" : "audiokit",
@@ -15,8 +15,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/AudioKit/AudioKitEX",
       "state" : {
-        "revision" : "58fa4a002028a2addf96466dd5ad68182e7d387e",
-        "version" : "5.6.0"
+        "revision" : "cb1a1276978ffc08e00d4774c0617aa8a58a17c4",
+        "version" : "5.6.1"
       }
     },
     {
@@ -25,7 +25,7 @@
       "location" : "https://github.com/Compiler-Inc/CompilerSwiftAI",
       "state" : {
         "branch" : "main",
-        "revision" : "c490cd8597435526d62e9c05e58a52c97a3355fd"
+        "revision" : "962f8fb85872ba48a151857247a99a6039a86b83"
       }
     },
     {
