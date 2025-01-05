@@ -7,10 +7,10 @@ struct DLMCommand: Codable {
 }
 
 // Request model
-struct DLMRequest: Encodable {
+struct DLMRequest<State: Encodable>: Encodable {
     let id: String
     let prompt: String
-    let current_state: CurrentState
+    let current_state: State
 }
 
 class DLMService {
