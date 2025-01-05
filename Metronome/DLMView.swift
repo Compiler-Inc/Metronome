@@ -40,8 +40,9 @@ struct DLMView: View {
 
                 Button(action: {
                     Task {
+                        metronome.addStep("Sending request to DLM")
                         guard let commands = try? await dlm.processCommand(dlm.manualCommand ?? "", for: metronome) else { return }
-                        try await dlm.executeCommands(commands, metronome: metronome)
+                        metronome.executeCommands(commands)
                     }
                 }) {
                     HStack {
@@ -61,14 +62,14 @@ struct DLMView: View {
 
             // Processing Steps Area
             VStack(alignment: .leading, spacing: 4) {
-                if !dlm.processingSteps.isEmpty {
+                if !metronome.processingSteps.isEmpty {
                 Text("DLM Output")
                     .foregroundColor(DLMColors.primary75)
                         .font(.caption)
                 }
                 ScrollView {
                     VStack(alignment: .leading, spacing: 8) {
-                        ForEach(dlm.processingSteps) { step in
+                        ForEach(metronome.processingSteps) { step in
                             HStack {
                                 Text(step.text)
                                     .foregroundColor(DLMColors.primary75)
@@ -117,13 +118,13 @@ struct DLMView: View {
                 do {
                     guard realtimeTranscript != "" else { return }
                     let response = try await dlm.processCommand(realtimeTranscript, for: metronome)
-                    try await dlm.executeCommands(response, metronome: metronome)
-                    guard let commands = try? await dlm.processCommand(realtimeTranscriptBuffer ?? "", for: metronome) else { return }
-                    try await dlm.executeCommands(commands, metronome: metronome)
+                    metronome.executeCommands(response)
+                    guard let commands = try? await dlm.processCommand(realtimeTranscriptBuffer, for: metronome) else { return }
+                    metronome.executeCommands(commands)
                     realtimeTranscript = ""
                     realtimeTranscriptBuffer = ""
                 } catch {
-                    dlm.processingSteps.append(ProcessingStep(text: "Error: \(error.localizedDescription)", isComplete: true))
+                    metronome.processingSteps.append(ProcessingStep(text: "Error: \(error.localizedDescription)", isComplete: true))
                 }
                 isProcessingAudioCommands = false
             }

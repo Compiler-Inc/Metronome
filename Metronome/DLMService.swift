@@ -81,18 +81,10 @@ class DLMService {
     private let baseURL = "http://backend.compiler.inc/function-call"
     private let apiKey = "890a192daeeb1bf8aa9abd11fc17c605399b0a5e708ef0c971f29e47a9cba20e"
     private let appId = ""
-    var processingSteps: [ProcessingStep] = []
+
     var manualCommand: String?
 
-    private func addStep(_ text: String) {
-        processingSteps.append(ProcessingStep(text: text, isComplete: false))
-    }
 
-    private func completeLastStep() {
-        if let lastIndex = processingSteps.indices.last {
-            processingSteps[lastIndex].isComplete = true
-        }
-    }
 
     func processCommand(_ content: String, for metro: Metronome) async throws -> [DLMCommand] {
         print("🚀 Starting processCommand with content: \(content)")
@@ -121,7 +113,7 @@ class DLMService {
         print("📤 Request Headers:", urlRequest.allHTTPHeaderFields ?? [:])
         print("📦 Request Body:", String(data: jsonData, encoding: .utf8) ?? "nil")
         
-        addStep("Sending request to DLM")
+
         print("⏳ Starting network request...")
         
         let (data, response) = try await URLSession.shared.data(for: urlRequest)
@@ -144,11 +136,15 @@ class DLMService {
         }
     }
 
-    func executeCommands(_ commands: [DLMCommand], metronome: Metronome) async throws {
+}
+
+extension Metronome {
+
+    func executeCommands(_ commands: [DLMCommand]) {
         addStep("Executing commands")
         print("🎯 DLM executing commands: \(commands)")
         completeLastStep()
-        
+
         for command in commands {
             print("⚡️ Processing command: \(command)")
             guard let metronomeCommand = MetronomeCommand.from(command) else {
@@ -160,37 +156,37 @@ class DLMService {
             switch metronomeCommand {
             case .play:
                 addStep("Starting metronome")
-                metronome.sequencer.play()
+                sequencer.play()
                 completeLastStep()
 
             case .stop:
                 addStep("Stopping metronome")
-                metronome.sequencer.stop()
+                sequencer.stop()
                 completeLastStep()
 
             case .setTempo(let bpm):
                 addStep("Setting tempo to \(bpm) BPM")
-                metronome.tempo = bpm
+                tempo = bpm
                 completeLastStep()
 
             case .rampTempo(let bpm, let duration):
                 addStep("Ramping tempo to \(bpm) BPM over \(duration) seconds")
-                metronome.rampTempo(bpm: bpm, duration: duration)
+                rampTempo(bpm: bpm, duration: duration)
                 completeLastStep()
 
             case .changeSound(let sound):
                 addStep("Setting sound to \(sound)")
                 let s = GiantSound.allCases.first(where: {$0.description == sound})
                 if let note = s?.rawValue {
-                    metronome.note = MIDINoteNumber(note)
+                    self.note = MIDINoteNumber(note)
                 }
                 completeLastStep()
-      
+
             case .setDownBeat(let sound):
                 addStep("Setting downbeat to \(sound)")
                 let s = GiantSound.allCases.first(where: {$0.description == sound})
                 if let note = s?.rawValue {
-                    metronome.startingNote = MIDINoteNumber(note)
+                    startingNote = MIDINoteNumber(note)
                 }
                 completeLastStep()
 
@@ -198,15 +194,15 @@ class DLMService {
                 addStep("Setting upbeat to \(sound)")
                 let s = GiantSound.allCases.first(where: {$0.description == sound})
                 if let note = s?.rawValue {
-                    metronome.accentNote = MIDINoteNumber(note)
+                    accentNote = MIDINoteNumber(note)
                 }
                 completeLastStep()
 
             case .setGapMeasures(let count):
                 addStep("Setting gap measures to \(count)")
-                metronome.gapMeasureCount = count
+                gapMeasureCount = count
                 completeLastStep()
-            
+
             case .noOp:
                 addStep("NoOp")
                 print("⚪️ NoOp command received")
@@ -216,4 +212,3 @@ class DLMService {
         print("✨ Finished executing all commands")
     }
 }
-

@@ -11,6 +11,18 @@ class Metronome {
     let silencer = Mixer()
     var timer = Timer()
 
+    var processingSteps: [ProcessingStep] = []
+
+    public func addStep(_ text: String) {
+        processingSteps.append(ProcessingStep(text: text, isComplete: false))
+    }
+
+    public func completeLastStep() {
+        if let lastIndex = processingSteps.indices.last {
+            processingSteps[lastIndex].isComplete = true
+        }
+    }
+
     @objc func fireTimer() {
         if let start = startTime, let target = targetTempo, let duration = targetDuration {
             let elapsedTime = Date().timeIntervalSince(start)
