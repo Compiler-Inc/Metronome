@@ -20,10 +20,6 @@ class DLMService {
     private let apiKey = "371f0e448174ad84a4cfd0af924a1b1638bdf99cfe8e91ad2b1c23df925cb8a1"
     private let appId = ""
 
-    var manualCommand: String?
-
-
-
     func processCommand(_ content: String, for metro: Metronome) async throws -> [DLMCommand] {
         print("🚀 Starting processCommand with content: \(content)")
         

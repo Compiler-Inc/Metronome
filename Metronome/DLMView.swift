@@ -14,6 +14,8 @@ struct DLMView: View {
     @State private var isProcessingAudioCommands = false
     @State private var processingSteps: [String] = []
 
+    @State var manualCommand = ""
+
     var body: some View {
         VStack(spacing: 4) {
             // Text Input Area
@@ -24,10 +26,7 @@ struct DLMView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
 
                 ZStack(alignment: .topLeading) {
-                    TextEditor(text: .init(
-                        get: { dlm.manualCommand ?? "" },
-                        set: { dlm.manualCommand = $0 }
-                    ))
+                    TextEditor(text: $manualCommand)
                     .padding(.horizontal, 4)
                     .padding(.vertical, 8)
                 }
@@ -41,7 +40,7 @@ struct DLMView: View {
                 Button(action: {
                     Task {
                         metronome.addStep("Sending request to DLM")
-                        guard let commands = try? await dlm.processCommand(dlm.manualCommand ?? "", for: metronome) else { return }
+                        guard let commands = try? await dlm.processCommand(manualCommand, for: metronome) else { return }
                         metronome.completeLastStep()
                         metronome.executeCommands(commands)
                     }
@@ -56,7 +55,7 @@ struct DLMView: View {
                     .foregroundColor(.white)
                     .cornerRadius(8)
                 }
-                .disabled(dlm.manualCommand?.isEmpty ?? true)
+                .disabled(manualCommand.isEmpty)
                 .buttonStyle(.plain)
             }
             .padding()
