@@ -23,7 +23,7 @@ class DLMService {
         self.appId = appId
     }
 
-    func processCommand(_ content: String, for metro: Metronome) async throws -> [DLMCommand] {
+    func processCommand<State: Encodable>(_ content: String, for state: State) async throws -> [DLMCommand] {
         print("🚀 Starting processCommand with content: \(content)")
         
         guard let url = URL(string: baseURL) else {
@@ -35,7 +35,7 @@ class DLMService {
         let request = DLMRequest(
             id: appId,
             prompt: content,
-            current_state: CurrentState(bpm: metro.tempo)
+            current_state: state
         )
         
         var urlRequest = URLRequest(url: url)

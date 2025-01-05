@@ -41,7 +41,7 @@ struct DLMView: View {
                 Button(action: {
                     Task {
                         metronome.addStep("Sending request to DLM")
-                        guard let commands = try? await dlm.processCommand(manualCommand, for: metronome) else { return }
+                        guard let commands = try? await dlm.processCommand(manualCommand, for: CurrentState(bpm: metronome.tempo)) else { return }
                         metronome.completeLastStep()
                         metronome.executeCommands(commands)
                     }
@@ -118,9 +118,9 @@ struct DLMView: View {
                 
                 do {
                     guard realtimeTranscript != "" else { return }
-                    let response = try await dlm.processCommand(realtimeTranscript, for: metronome)
+                    let response = try await dlm.processCommand(realtimeTranscript, for: CurrentState(bpm: metronome.tempo))
                     metronome.executeCommands(response)
-                    guard let commands = try? await dlm.processCommand(realtimeTranscriptBuffer, for: metronome) else { return }
+                    guard let commands = try? await dlm.processCommand(realtimeTranscriptBuffer, for: CurrentState(bpm: metronome.tempo)) else { return }
                     metronome.executeCommands(commands)
                     realtimeTranscript = ""
                     realtimeTranscriptBuffer = ""
