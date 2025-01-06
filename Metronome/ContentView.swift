@@ -54,8 +54,9 @@ struct ContentView: View {
                         Button(action: {
                             metronome.isPlaying.toggle()
                         }) {
-                            Text(metronome.isPlaying ? "Stop" : "Play")
-                                .font(.system(size: 60))
+                            Image(systemName: metronome.isPlaying ? "stop" : "play")
+                                .resizable()
+                                .frame(width: 64, height: 64)
                                 .foregroundColor(metronome.isPlaying ? .red : .green)
                         }
                     }
@@ -66,6 +67,7 @@ struct ContentView: View {
 
         }
         .padding()
+        .buttonStyle(.borderless)
     }
 
 }
