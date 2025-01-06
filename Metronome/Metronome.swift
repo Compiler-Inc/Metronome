@@ -11,6 +11,7 @@ class Metronome {
     let promptRecorderInput = Mixer()
     let silencer = Mixer()
     var timer = Timer()
+    let deepgram = DeepgramService()
 
     var processingSteps: [ProcessingStep] = []
 
@@ -164,18 +165,18 @@ extension Metronome {
     func startRealtimeTranscription() {
         // Install tap on the input node after lowpass
         promptTap = RawDataTap(promptRecorderInput, bufferSize: 4096) { buffer in
-            DeepgramService.shared.sendAudioData(buffer)
+            self.deepgram.sendAudioData(buffer)
         }
         promptTap?.start()
         
         // Start WebSocket connection
-        DeepgramService.shared.startRealtimeTranscription()
+        deepgram.startRealtimeTranscription()
     }
     
     func stopRealtimeTranscription() {
         promptTap?.stop()
         promptTap = nil
-        DeepgramService.shared.stopRealtimeTranscription()
+        deepgram.stopRealtimeTranscription()
     }
 }
 

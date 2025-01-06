@@ -111,13 +111,8 @@ class DeepgramService {
     
     private var transcriptionTimer: Timer?
     private var lastTranscriptionTime: Date?
-    
-    static let shared = DeepgramService()
-    
-    init() {
-
         
-    }
+    init() {}
     
     func requestTranscript(audioFileURL: URL) async throws -> DeepgramResponse {
         // Read the audio file as binary data
