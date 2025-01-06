@@ -13,9 +13,9 @@ import AudioKit
 class DLMViewModel {
     
     let deepgram = DeepgramService()
-    let audioEngine = AudioEngine()
+    private let audioEngine = AudioEngine()
     private var promptTap: RawDataTap?
-    let silencer = Mixer()
+    private let silencer = Mixer()
     
     var processingSteps: [ProcessingStep] = []
     
