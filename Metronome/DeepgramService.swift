@@ -102,6 +102,7 @@ struct ProfanityAnalysis {
     let transcript: String
 }
 
+@MainActor
 @Observable
 class DeepgramService {
     private var webSocket: URLSessionWebSocketTask?
@@ -183,25 +184,28 @@ class DeepgramService {
     }
     
     private func receiveMessage() {
-        webSocket?.receive { [weak self] result in
-            switch result {
-            case .success(let message):
-                switch message {
-                case .data(let data):
-                    self?.handleTranscriptData(data)
-                case .string(let str):
-                    self?.handleTranscriptString(str)
-                @unknown default:
-                    break
+        
+        Task { @MainActor in
+            do {
+                if let message = try await webSocket?.receive() {
+                    switch message {
+                    case .data(let data):
+                        handleTranscriptData(data)
+                    case .string(let str):
+                        handleTranscriptString(str)
+                    @unknown default:
+                        break
+                    }
+                    // Continue receiving if still listening
+                    if isListening == true {
+                        receiveMessage()
+                    }
                 }
-                // Continue receiving if still listening
-                if self?.isListening == true {
-                    self?.receiveMessage()
-                }
-            case .failure(let error):
+            } catch {
                 print("WebSocket error: \(error)")
             }
         }
+        
     }
     
     private func handleTranscriptString(_ jsonString: String) {
@@ -227,7 +231,7 @@ class DeepgramService {
             print("Transcript: \(response.channel.alternatives.first?.transcript ?? "NO TRANS")")
             if response.is_final,
                let transcript = response.channel.alternatives.first?.transcript {
-                DispatchQueue.main.async { [weak self] in
+                Task { @MainActor [weak self] in
                     self?.onTranscriptReceived?(transcript)
                     self?.resetTranscriptionTimer()
                 }
@@ -302,8 +306,10 @@ class DeepgramService {
         transcriptionTimer = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: false) { [weak self] _ in
             guard let self = self else { return }
             print("Transcription complete")
-            self.onTranscriptionComplete?()
-            self.stopRealtimeTranscription()
+            Task { @MainActor in
+                self.onTranscriptionComplete?()
+                self.stopRealtimeTranscription()
+            }
         }
     }
 }

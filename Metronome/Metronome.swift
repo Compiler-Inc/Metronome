@@ -3,6 +3,7 @@ import AudioKitEX
 import SwiftUI
 import CompilerSwiftAI
 
+@MainActor
 @Observable
 class Metronome {
     let engine = AudioEngine()
