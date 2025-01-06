@@ -16,14 +16,14 @@ struct ContentView: View {
     var body: some View {
         #if os(macOS)
         HStack(spacing: 0) {
-            DLMView(metronome: metronome, dlm: dlm)
+            DLMView(state: CurrentState(bpm: metronome.tempo), metronome: metronome, dlm: dlm)
             MetronomeView(metronome: metronome)
         }
         .buttonStyle(.borderless)
         #else
         VStack(spacing: 0) {
             MetronomeView(metronome: metronome)
-            DLMView(metronome: metronome, dlm: dlm)
+            DLMView(state: CurrentState(bpm: metronome.tempo), metronome: metronome, dlm: dlm)
         }
         #endif
     }

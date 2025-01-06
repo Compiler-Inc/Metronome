@@ -1,8 +1,9 @@
 import SwiftUI
 import CompilerSwiftAI
 
-struct DLMView: View {
+struct DLMView<AppState: Encodable & Sendable>: View {
     
+    var state: AppState
     var model = DLMViewModel()
     var metronome: Metronome
     var deepgram: DeepgramService { metronome.deepgram }
@@ -20,7 +21,7 @@ struct DLMView: View {
     func process(prompt: String) {
         Task {
             model.addStep("Sending request to DLM")
-            guard let commands: [DLMCommand<CommandArgs>] = try? await dlm.processCommand(prompt, for: CurrentState(bpm: metronome.tempo)) else { return }
+            guard let commands: [DLMCommand<CommandArgs>] = try? await dlm.processCommand(prompt, for: state) else { return }
             model.completeLastStep()
             metronome.executeCommands(commands)
         }
