@@ -16,7 +16,7 @@ struct ContentView: View {
     var body: some View {
         #if os(macOS)
         HStack(spacing: 0) {
-            DLMView(state: CurrentState(bpm: metronome.tempo), metronome: metronome, dlm: dlm, execute: metronome.executeCommands)
+            DLMView(state: CurrentState(bpm: metronome.tempo), dlm: dlm, execute: metronome.executeCommands)
             MetronomeView(metronome: metronome)
         }
         .buttonStyle(.borderless)

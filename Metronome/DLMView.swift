@@ -5,8 +5,6 @@ struct DLMView<AppState: Encodable & Sendable>: View {
     
     var state: AppState
     @State var model = DLMViewModel()
-    var metronome: Metronome
-    var deepgram: DeepgramService { model.deepgram }
     var dlm: DLMService
     var execute: ([DLMCommand<CommandArgs>]) -> ()
     
