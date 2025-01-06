@@ -46,7 +46,8 @@ struct MetronomeView: View {
                     }
                 }
                 
-                VStack(spacing: 30) {
+                VStack(spacing: 15) {
+                    // LabeledContent("Pulse", value: "\(GiantSound(rawValue: Int(metronome.note)) ?? .snap)")
                     Text("Pulse: \(GiantSound(rawValue: Int(metronome.note)) ?? .snap)")
                         .monospacedDigit()
                     Text("Downbeat: \(GiantSound(rawValue: Int(metronome.startingNote ?? 0)) ?? .none)")
@@ -60,7 +61,7 @@ struct MetronomeView: View {
                     }) {
                         Image(systemName: metronome.isPlaying ? "stop" : "play")
                             .resizable()
-                            .frame(width: 64, height: 64)
+                            .frame(width: 42, height: 42)
                             .foregroundColor(metronome.isPlaying ? .red : .green)
                     }
                 }
