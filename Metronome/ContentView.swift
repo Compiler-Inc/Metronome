@@ -11,7 +11,7 @@ struct ContentView: View {
     @State var metronome = Metronome()
 
     var body: some View {
-        HStack(spacing: 20) {
+        HStack(spacing: 0) {
             DLMView(metronome: metronome)
             MetronomeView(metronome: metronome)
         }
