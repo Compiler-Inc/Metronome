@@ -293,21 +293,17 @@ class DeepgramService {
     }
     
     private func resetTranscriptionTimer() {
-        DispatchQueue.main.async { [weak self] in
+        transcriptionTimer?.invalidate()
+        transcriptionTimer = nil
+        lastTranscriptionTime = Date()
+        
+        print("Starting transcription timer at \(self.lastTranscriptionTime!)")
+        
+        transcriptionTimer = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: false) { [weak self] _ in
             guard let self = self else { return }
-            
-            self.transcriptionTimer?.invalidate()
-            self.transcriptionTimer = nil
-            self.lastTranscriptionTime = Date()
-            
-            print("Starting transcription timer at \(self.lastTranscriptionTime!)")
-            
-            self.transcriptionTimer = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: false) { [weak self] _ in
-                guard let self = self else { return }
-                print("Transcription complete")
-                self.onTranscriptionComplete?()
-                self.stopRealtimeTranscription()
-            }
+            print("Transcription complete")
+            self.onTranscriptionComplete?()
+            self.stopRealtimeTranscription()
         }
     }
 }
