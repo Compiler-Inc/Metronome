@@ -65,4 +65,6 @@ struct MetronomeView: View {
 
 #Preview {
     MetronomeView(metronome: Metronome())
+        .buttonStyle(.borderless)
+        .padding()
 }
