@@ -199,12 +199,12 @@ extension Metronome {
             switch metronomeCommand {
             case .play:
                 addStep("Starting metronome")
-                sequencer.play()
+                isPlaying = true
                 completeLastStep()
 
             case .stop:
                 addStep("Stopping metronome")
-                sequencer.stop()
+                isPlaying = false
                 completeLastStep()
 
             case .setTempo(let bpm):
