@@ -16,51 +16,10 @@ struct DLMView: View {
     @State private var isProcessingAudioCommands = false
     @State private var processingSteps: [String] = []
 
-    @State var manualCommand = ""
-
     var body: some View {
         VStack(spacing: 4) {
-            // Text Input Area
-            VStack(spacing: 8) {
-                Text("Prompt")
-                    .foregroundStyle(DLMColors.primary75)
-                    .padding(.horizontal, 4)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-
-                ZStack(alignment: .topLeading) {
-                    TextEditor(text: $manualCommand)
-                    .padding(.horizontal, 4)
-                    .padding(.vertical, 8)
-                }
-                .frame(height: 100)
-                .foregroundStyle(DLMColors.primary100)
-                .scrollContentBackground(.hidden)
-                .background(DLMColors.primary20)
-                .cornerRadius(8)
-                .tint(DLMColors.primary100)
-
-                Button(action: {
-                    Task {
-                        metronome.addStep("Sending request to DLM")
-                        guard let commands: [DLMCommand<CommandArgs>] = try? await dlm.processCommand(manualCommand, for: CurrentState(bpm: metronome.tempo)) else { return }
-                        metronome.completeLastStep()
-                        metronome.executeCommands(commands)
-                    }
-                }) {
-                    HStack {
-                        Text("Submit")
-                        Image(systemName: "arrow.right.circle.fill")
-                    }
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 8)
-                    .background(DLMColors.dlmGradient)
-                    .foregroundColor(.white)
-                    .cornerRadius(8)
-                }
-                .disabled(manualCommand.isEmpty)
-                .buttonStyle(.plain)
-            }
-            .padding()
+            
+            DLMTextInputView(metronome: metronome, dlm: dlm)
 
             // Processing Steps Area
             VStack(alignment: .leading, spacing: 4) {
