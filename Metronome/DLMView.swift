@@ -18,7 +18,9 @@ struct DLMView: View {
 
     var body: some View {
         VStack(spacing: 4) {
-            DLMTextInputView(metronome: metronome, dlm: dlm)
+            DLMTextInputView(state: CurrentState(bpm: metronome.tempo),
+                             executeCommands: metronome.executeCommands,
+                             dlm: dlm)
             DLMProcessingStepsView(metronome: metronome)
         }
         .frame(minWidth: 200)
