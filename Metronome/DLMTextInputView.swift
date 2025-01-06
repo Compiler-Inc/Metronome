@@ -10,9 +10,7 @@ import CompilerSwiftAI
 
 struct DLMTextInputView: View {
     
-    var state: CurrentState
-    var executeCommands: ([DLMCommand<CommandArgs>]) -> ()
-    var dlm: DLMService
+    var process: (String) -> ()
     
     @State var manualCommand = ""
     
@@ -37,12 +35,7 @@ struct DLMTextInputView: View {
             .tint(DLMColors.primary100)
 
             Button(action: {
-                Task {
-                    // metronome.addStep("Sending request to DLM")
-                    guard let commands: [DLMCommand<CommandArgs>] = try? await dlm.processCommand(manualCommand, for: state) else { return }
-                    // metronome.completeLastStep()
-                    executeCommands(commands)
-                }
+                process(manualCommand)
             }) {
                 HStack {
                     Text("Submit")
@@ -62,9 +55,5 @@ struct DLMTextInputView: View {
 }
 
 #Preview {
-    let metronome = Metronome()
-    DLMTextInputView(state: CurrentState(bpm: metronome.tempo),
-                     executeCommands: metronome.executeCommands,
-                     dlm: DLMService(apiKey: "371f0e448174ad84a4cfd0af924a1b1638bdf99cfe8e91ad2b1c23df925cb8a1",
-                                     appId: "1561de0c-8e1c-4ace-a870-ac0baecf40f6"))
+    DLMTextInputView(process: { _ in })
 }

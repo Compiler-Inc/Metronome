@@ -16,12 +16,19 @@ struct DLMView: View {
     @State private var realtimeTranscriptBuffer: String = ""
     @State private var isProcessingAudioCommands = false
     @State private var processingSteps: [String] = []
+    
+    func process(prompt: String) {
+        Task {
+            // metronome.addStep("Sending request to DLM")
+            guard let commands: [DLMCommand<CommandArgs>] = try? await dlm.processCommand(prompt, for: CurrentState(bpm: metronome.tempo)) else { return }
+            // metronome.completeLastStep()
+            metronome.executeCommands(commands)
+        }
+    }
 
     var body: some View {
         VStack(spacing: 4) {
-            DLMTextInputView(state: CurrentState(bpm: metronome.tempo),
-                             executeCommands: metronome.executeCommands,
-                             dlm: dlm)
+            DLMTextInputView(process: process)
             DLMProcessingStepsView(model: model)
         }
         .frame(minWidth: 200)
