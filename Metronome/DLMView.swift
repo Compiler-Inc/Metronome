@@ -6,8 +6,7 @@ struct DLMView: View {
     var model = DLMViewModel()
     var metronome: Metronome
     var deepgram: DeepgramService { metronome.deepgram }
-    @State var dlm = DLMService(apiKey: "371f0e448174ad84a4cfd0af924a1b1638bdf99cfe8e91ad2b1c23df925cb8a1",
-                                appId: "1561de0c-8e1c-4ace-a870-ac0baecf40f6")
+    var dlm: DLMService
 
     @State private var audioFileTranscript: String = ""
     @State private var promptTranscript: String = ""
