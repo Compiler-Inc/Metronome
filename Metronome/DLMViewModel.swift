@@ -12,7 +12,7 @@ import AudioKit
 @Observable
 class DLMViewModel {
     
-    let deepgram = DeepgramService()
+    let deepgram = DeepgramService(apiKey: "95536b5a0b268e8d3392854a7d4858386278af2c")
     private let audioEngine = AudioEngine()
     private var promptTap: RawDataTap?
     private let silencer = Mixer()

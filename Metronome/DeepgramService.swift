@@ -112,8 +112,12 @@ class DeepgramService {
     
     private var transcriptionTimer: Timer?
     private var lastTranscriptionTime: Date?
+    
+    let apiKey: String
         
-    init() {}
+    init(apiKey: String) {
+        self.apiKey = apiKey
+    }
     
     func requestTranscript(audioFileURL: URL) async throws -> DeepgramResponse {
         // Read the audio file as binary data
@@ -139,7 +143,7 @@ class DeepgramService {
         request.httpMethod = "POST"
         
         // Set request headers
-        request.setValue("Token 95536b5a0b268e8d3392854a7d4858386278af2c", forHTTPHeaderField: "Authorization") // Replace DEEPGRAM_API_KEY with your actual API key
+        request.setValue("Token \(apiKey)", forHTTPHeaderField: "Authorization") // Replace DEEPGRAM_API_KEY with your actual API key
         request.setValue("audio/wav", forHTTPHeaderField: "Content-Type")
         
         // Set request body with audio data
@@ -173,7 +177,7 @@ class DeepgramService {
         guard let url = URL(string: wsURL) else { return }
         
         var request = URLRequest(url: url)
-        request.setValue("Token 95536b5a0b268e8d3392854a7d4858386278af2c", forHTTPHeaderField: "Authorization")
+        request.setValue("Token \(apiKey)", forHTTPHeaderField: "Authorization")
         
         let session = URLSession(configuration: .default)
         webSocket = session.webSocketTask(with: request)
