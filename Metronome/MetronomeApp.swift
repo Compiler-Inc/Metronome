@@ -27,6 +27,9 @@ struct MetronomeApp: App {
         WindowGroup {
             ContentView()
         }
+        #if os(macOS)
+        .windowStyle(.hiddenTitleBar)
+        #endif
         .modelContainer(sharedModelContainer)
     }
 }
