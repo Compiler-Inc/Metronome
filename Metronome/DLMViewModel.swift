@@ -19,6 +19,8 @@ class DLMViewModel {
     
     var processingSteps: [ProcessingStep] = []
     
+    var manualCommand = ""
+    
     public func addStep(_ text: String) {
         processingSteps.append(ProcessingStep(text: text, isComplete: false))
     }

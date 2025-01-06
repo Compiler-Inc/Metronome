@@ -10,11 +10,9 @@ import CompilerSwiftAI
 
 struct DLMTextInputView: View {
     
-    var model: DLMViewModel
+    @Bindable var model: DLMViewModel
     var process: (String) -> ()
-    
-    @State var manualCommand = ""
-    
+        
     var body: some View {
         // Text Input Area
         VStack(spacing: 8) {
@@ -24,7 +22,7 @@ struct DLMTextInputView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
 
             ZStack(alignment: .topLeading) {
-                TextEditor(text: $manualCommand)
+                TextEditor(text: $model.manualCommand)
                 .padding(.horizontal, 4)
                 .padding(.vertical, 8)
             }
@@ -36,7 +34,7 @@ struct DLMTextInputView: View {
             .tint(DLMColors.primary100)
 
             Button(action: {
-                process(manualCommand)
+                process(model.manualCommand)
             }) {
                 HStack {
                     Text("Submit")
@@ -48,7 +46,7 @@ struct DLMTextInputView: View {
                 .foregroundColor(.white)
                 .cornerRadius(8)
             }
-            .disabled(manualCommand.isEmpty)
+            .disabled(model.manualCommand.isEmpty)
             .buttonStyle(.plain)
             
             Button {
