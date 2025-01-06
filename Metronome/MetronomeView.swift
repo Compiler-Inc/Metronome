@@ -65,6 +65,7 @@ struct MetronomeView: View {
                     }
                 }
             }
+            .padding()
         }
     }
 }
