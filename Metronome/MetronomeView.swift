@@ -48,6 +48,8 @@ struct MetronomeView: View {
                     }
                 }
                 
+                LabeledContent("Target Tempo", value: "\(metronome.targetTempo ?? metronome.tempo)")
+                
                 LabeledContent("Pulse", value: "\(GiantSound(rawValue: Int(metronome.note)) ?? .snap)")
                 LabeledContent("Downbeat", value: "\(GiantSound(rawValue: Int(metronome.startingNote ?? 0)) ?? .none)")
                 LabeledContent("Upbeat", value: "\(GiantSound(rawValue: Int(metronome.accentNote ?? 0)) ?? .none)")
