@@ -15,6 +15,7 @@ class DLMViewModel {
     let deepgram = DeepgramService()
     let audioEngine = AudioEngine()
     private var promptTap: RawDataTap?
+    let silencer = Mixer()
     
     var processingSteps: [ProcessingStep] = []
     
@@ -30,15 +31,19 @@ class DLMViewModel {
     
     func startRealtimeTranscription() {
         
+        guard let input = audioEngine.input else {
+            print("No input!")
+            return
+        }
+        
+        silencer.addInput(input)
+        silencer.volume = 0
+        audioEngine.output = silencer
+        
         do {
             try audioEngine.start()
         } catch {
             print("Error starting audio engine: \(error)")
-            return
-        }
-        
-        guard let input = audioEngine.input else {
-            print("No input!")
             return
         }
         

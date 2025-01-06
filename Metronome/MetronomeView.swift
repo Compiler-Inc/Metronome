@@ -19,12 +19,6 @@ struct MetronomeView: View {
             
             Form {
                 
-                Button {
-                    metronome.startRealtimeTranscription()
-                } label: {
-                    Text("Start TX")
-                }
-                
                 LabeledContent("Tempo") {
                     HStack {
                         Button(action: {

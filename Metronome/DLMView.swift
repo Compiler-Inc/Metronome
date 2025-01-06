@@ -6,7 +6,7 @@ struct DLMView<AppState: Encodable & Sendable>: View {
     var state: AppState
     var model = DLMViewModel()
     var metronome: Metronome
-    var deepgram: DeepgramService { metronome.deepgram }
+    var deepgram: DeepgramService { model.deepgram }
     var dlm: DLMService
     var execute: ([DLMCommand<CommandArgs>]) -> ()
 
@@ -32,7 +32,7 @@ struct DLMView<AppState: Encodable & Sendable>: View {
 
     var body: some View {
         VStack(spacing: 4) {
-            DLMTextInputView(process: process)
+            DLMTextInputView(model: model, process: process)
             DLMProcessingStepsView(model: model)
         }
         .frame(minWidth: 200)

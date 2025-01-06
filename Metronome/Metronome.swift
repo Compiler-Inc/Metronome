@@ -8,11 +8,7 @@ import CompilerSwiftAI
 class Metronome {
     let engine = AudioEngine()
     let sampler = AppleSampler()
-    private var promptTap: RawDataTap?
-    let promptRecorderInput = Mixer()
-    let silencer = Mixer()
     var timer = Timer()
-    let deepgram = DeepgramService()
 
     var processingSteps: [ProcessingStep] = []
 
@@ -84,8 +80,6 @@ class Metronome {
         }
     }
     
-
-    let mixer = Mixer()
     let sequencer = Sequencer()
 
     func rampTempo(bpm: Double, duration: TimeInterval) {
@@ -106,16 +100,9 @@ class Metronome {
         guard let input = engine.input else {
             fatalError()
         }
-        promptRecorderInput.addInput(input)
-        silencer.addInput(promptRecorderInput)
-        silencer.volume = 0
-        
-        // Connect samplers to mixer
-        mixer.addInput(sampler)
-        mixer.addInput(silencer)
 
         // Connect mixer to engine output
-        engine.output = mixer
+        engine.output = sampler
         
         setupSequencer()
 
@@ -160,25 +147,6 @@ class Metronome {
         sequencer.loopEnabled = true
     }
 
-}
-
-extension Metronome {
-    func startRealtimeTranscription() {
-        // Install tap on the input node after lowpass
-        promptTap = RawDataTap(promptRecorderInput, bufferSize: 4096) { buffer in
-            self.deepgram.sendAudioData(buffer)
-        }
-        promptTap?.start()
-        
-        // Start WebSocket connection
-        deepgram.startRealtimeTranscription()
-    }
-    
-    func stopRealtimeTranscription() {
-        promptTap?.stop()
-        promptTap = nil
-        deepgram.stopRealtimeTranscription()
-    }
 }
 
 extension Metronome {

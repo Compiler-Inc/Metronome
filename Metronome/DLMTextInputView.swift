@@ -10,6 +10,7 @@ import CompilerSwiftAI
 
 struct DLMTextInputView: View {
     
+    var model: DLMViewModel
     var process: (String) -> ()
     
     @State var manualCommand = ""
@@ -49,11 +50,18 @@ struct DLMTextInputView: View {
             }
             .disabled(manualCommand.isEmpty)
             .buttonStyle(.plain)
+            
+            Button {
+                model.startRealtimeTranscription()
+            } label: {
+                Text("Start TX")
+            }
         }
         .padding()
     }
 }
 
 #Preview {
-    DLMTextInputView(process: { _ in })
+    let model = DLMViewModel()
+    DLMTextInputView(model: model, process: { _ in })
 }
