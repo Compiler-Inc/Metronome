@@ -12,15 +12,16 @@ struct ContentView: View {
 
     var body: some View {
         VStack {
-            Button {
-                metronome.startRealtimeTranscription()
-            } label: {
-                Text("Start TX")
-            }
-
             HStack(spacing: 20) {
                 DLMView(metronome: $metronome)
                 VStack {
+                    
+                    Button {
+                        metronome.startRealtimeTranscription()
+                    } label: {
+                        Text("Start TX")
+                    }
+                    
                     HStack {
                         Button(action: {
                             metronome.tempo -= 10.0
@@ -62,11 +63,7 @@ struct ContentView: View {
                     }
                 }
             }
-            .padding()
-            
-
         }
-        .padding()
         .buttonStyle(.borderless)
     }
 
