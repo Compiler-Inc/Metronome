@@ -248,7 +248,8 @@ class DeepgramService {
         // Convert float samples to 16-bit PCM
         var int16Data = [Int16]()
         for sample in samples {
-            let int16Sample = Int16(sample * Float(Int16.max))
+            let clamped = min(max(sample, -1.0), 1.0)
+            let int16Sample = Int16(clamped * Float(Int16.max))
             int16Data.append(int16Sample)
         }
         
