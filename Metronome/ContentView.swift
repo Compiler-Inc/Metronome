@@ -18,7 +18,7 @@ struct ContentView: View {
         }
         .buttonStyle(.borderless)
         #else
-        VStack {
+        VStack(spacing: 0) {
             MetronomeView(metronome: metronome)
             DLMView(metronome: metronome)
         }

@@ -17,7 +17,7 @@ struct MetronomeView: View {
             Rectangle()
                 .fill(.clear)
             
-            VStack {
+            Form {
                 
                 Button {
                     metronome.startRealtimeTranscription()
@@ -25,48 +25,43 @@ struct MetronomeView: View {
                     Text("Start TX")
                 }
                 
-                HStack {
-                    Button(action: {
-                        metronome.tempo -= 10.0
-                    }) {
-                        Image(systemName: "minus.circle.fill")
-                            .font(.title)
-                    }
-                    
-                    Text("\(Int(metronome.tempo))")
-                        .font(.system(size: 48, weight: .bold, design: .rounded))
-                        .monospacedDigit()
-                        .frame(width: 100)
-                    
-                    Button(action: {
-                        metronome.tempo += 10.0
-                    }) {
-                        Image(systemName: "plus.circle.fill")
-                            .font(.title)
+                LabeledContent("Tempo") {
+                    HStack {
+                        Button(action: {
+                            metronome.tempo -= 10.0
+                        }) {
+                            Image(systemName: "minus.circle.fill")
+                                .font(.title)
+                        }
+                        
+                        Text("\(Int(metronome.tempo))")
+                            .font(.system(size: 48, weight: .bold, design: .rounded))
+                            .monospacedDigit()
+                            .frame(width: 100)
+                        
+                        Button(action: {
+                            metronome.tempo += 10.0
+                        }) {
+                            Image(systemName: "plus.circle.fill")
+                                .font(.title)
+                        }
                     }
                 }
                 
-                VStack(spacing: 15) {
-                    // LabeledContent("Pulse", value: "\(GiantSound(rawValue: Int(metronome.note)) ?? .snap)")
-                    Text("Pulse: \(GiantSound(rawValue: Int(metronome.note)) ?? .snap)")
-                        .monospacedDigit()
-                    Text("Downbeat: \(GiantSound(rawValue: Int(metronome.startingNote ?? 0)) ?? .none)")
-                        .monospacedDigit()
-                    Text("Upbeat: \(GiantSound(rawValue: Int(metronome.accentNote ?? 0)) ?? .none)")
-                        .monospacedDigit()
-                    Text("Gap Measures: \(metronome.gapMeasureCount)")
-                        .monospacedDigit()
-                    Button(action: {
-                        metronome.isPlaying.toggle()
-                    }) {
-                        Image(systemName: metronome.isPlaying ? "stop" : "play")
-                            .resizable()
-                            .frame(width: 42, height: 42)
-                            .foregroundColor(metronome.isPlaying ? .red : .green)
-                    }
+                LabeledContent("Pulse", value: "\(GiantSound(rawValue: Int(metronome.note)) ?? .snap)")
+                LabeledContent("Downbeat", value: "\(GiantSound(rawValue: Int(metronome.startingNote ?? 0)) ?? .none)")
+                LabeledContent("Upbeat", value: "\(GiantSound(rawValue: Int(metronome.accentNote ?? 0)) ?? .none)")
+                    .monospacedDigit()
+                LabeledContent("Gap Measures", value: "\(metronome.gapMeasureCount)")
+                Button(action: {
+                    metronome.isPlaying.toggle()
+                }) {
+                    Image(systemName: metronome.isPlaying ? "stop" : "play")
+                        .resizable()
+                        .frame(width: 42, height: 42)
+                        .foregroundColor(metronome.isPlaying ? .red : .green)
                 }
             }
-            .padding()
         }
     }
 }
