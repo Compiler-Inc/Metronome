@@ -10,4 +10,6 @@ import Foundation
 @Observable
 class DLMViewModel {
     
+    var processingSteps: [ProcessingStep] = []
+    
 }

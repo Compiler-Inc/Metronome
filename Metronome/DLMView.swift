@@ -2,6 +2,8 @@ import SwiftUI
 import CompilerSwiftAI
 
 struct DLMView: View {
+    
+    var model = DLMViewModel()
     var metronome: Metronome
     var deepgram: DeepgramService { metronome.deepgram }
     @State var dlm = DLMService(apiKey: "371f0e448174ad84a4cfd0af924a1b1638bdf99cfe8e91ad2b1c23df925cb8a1",
@@ -21,7 +23,7 @@ struct DLMView: View {
             DLMTextInputView(state: CurrentState(bpm: metronome.tempo),
                              executeCommands: metronome.executeCommands,
                              dlm: dlm)
-            DLMProcessingStepsView(metronome: metronome)
+            DLMProcessingStepsView(model: model)
         }
         .frame(minWidth: 200)
         .background(DLMColors.primary10)
