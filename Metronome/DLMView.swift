@@ -8,6 +8,7 @@ struct DLMView<AppState: Encodable & Sendable>: View {
     var metronome: Metronome
     var deepgram: DeepgramService { metronome.deepgram }
     var dlm: DLMService
+    var execute: ([DLMCommand<CommandArgs>]) -> ()
 
     @State private var audioFileTranscript: String = ""
     @State private var promptTranscript: String = ""
@@ -23,7 +24,9 @@ struct DLMView<AppState: Encodable & Sendable>: View {
             model.addStep("Sending request to DLM")
             guard let commands: [DLMCommand<CommandArgs>] = try? await dlm.processCommand(prompt, for: state) else { return }
             model.completeLastStep()
-            metronome.executeCommands(commands)
+            model.addStep("Executing commands")
+            execute(commands)
+            model.completeLastStep()
         }
     }
 
