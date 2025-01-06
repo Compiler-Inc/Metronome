@@ -10,14 +10,9 @@ struct DLMView<AppState: Encodable & Sendable>: View {
     var dlm: DLMService
     var execute: ([DLMCommand<CommandArgs>]) -> ()
 
-    @State private var audioFileTranscript: String = ""
-    @State private var promptTranscript: String = ""
-    @State private var dlmResponse: String = ""
-    @State private var isProcessingDLM = false
     @State private var realtimeTranscript: String = ""
     @State private var realtimeTranscriptBuffer: String = ""
     @State private var isProcessingAudioCommands = false
-    @State private var processingSteps: [String] = []
     
     func process(prompt: String) {
         Task {
