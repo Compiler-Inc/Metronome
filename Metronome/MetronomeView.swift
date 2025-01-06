@@ -47,11 +47,11 @@ struct MetronomeView: View {
                 }
                 
                 VStack(spacing: 30) {
-                    Text("Pulse: \(GiantSound(rawValue: Int(metronome.note)) ?? .snap) (\(metronome.note))")
+                    Text("Pulse: \(GiantSound(rawValue: Int(metronome.note)) ?? .snap)")
                         .monospacedDigit()
-                    Text("Downbeat: \(GiantSound(rawValue: Int(metronome.startingNote ?? 0)) ?? .none) (\(metronome.startingNote ?? 0))")
+                    Text("Downbeat: \(GiantSound(rawValue: Int(metronome.startingNote ?? 0)) ?? .none)")
                         .monospacedDigit()
-                    Text("Upbeat: \(GiantSound(rawValue: Int(metronome.accentNote ?? 0)) ?? .none) (\(metronome.accentNote ?? 0))")
+                    Text("Upbeat: \(GiantSound(rawValue: Int(metronome.accentNote ?? 0)) ?? .none)")
                         .monospacedDigit()
                     Text("Gap Measures: \(metronome.gapMeasureCount)")
                         .monospacedDigit()
