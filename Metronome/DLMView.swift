@@ -19,9 +19,9 @@ struct DLMView: View {
     
     func process(prompt: String) {
         Task {
-            // metronome.addStep("Sending request to DLM")
+            model.addStep("Sending request to DLM")
             guard let commands: [DLMCommand<CommandArgs>] = try? await dlm.processCommand(prompt, for: CurrentState(bpm: metronome.tempo)) else { return }
-            // metronome.completeLastStep()
+            model.completeLastStep()
             metronome.executeCommands(commands)
         }
     }

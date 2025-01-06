@@ -12,4 +12,14 @@ class DLMViewModel {
     
     var processingSteps: [ProcessingStep] = []
     
+    public func addStep(_ text: String) {
+        processingSteps.append(ProcessingStep(text: text, isComplete: false))
+    }
+
+    public func completeLastStep() {
+        if let lastIndex = processingSteps.indices.last {
+            processingSteps[lastIndex].isComplete = true
+        }
+    }
+    
 }
