@@ -21,7 +21,7 @@ struct DLMView: View {
             DLMTextInputView(metronome: metronome, dlm: dlm)
             DLMProcessingStepsView(metronome: metronome)
         }
-        .frame(width: 200)
+        .frame(minWidth: 200)
         .background(DLMColors.primary10)
         .onAppear {
             setupTranscriptionHandlers()
