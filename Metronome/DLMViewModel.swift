@@ -21,6 +21,23 @@ class DLMViewModel {
     
     var manualCommand = ""
     
+    init() {
+        deepgram.onTranscriptReceived = { transcript in
+            Task { @MainActor in
+                if !self.manualCommand.isEmpty {
+                    self.manualCommand += " "
+                }
+                self.manualCommand += transcript
+            }
+        }
+        
+        deepgram.onTranscriptionComplete = {
+            Task { @MainActor in
+                print("transcription complete")
+            }
+        }
+    }
+    
     public func addStep(_ text: String) {
         processingSteps.append(ProcessingStep(text: text, isComplete: false))
     }

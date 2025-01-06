@@ -28,26 +28,5 @@ struct DLMView<AppState: Encodable & Sendable>: View {
         }
         .frame(minWidth: 200)
         .background(DLMColors.primary10)
-        .onAppear {
-            setupTranscriptionHandlers()
-        }
-    }
-    
-    private func setupTranscriptionHandlers() {
-        
-        deepgram.onTranscriptReceived = { transcript in
-            Task { @MainActor in
-                if !model.manualCommand.isEmpty {
-                    model.manualCommand += " "
-                }
-                model.manualCommand += transcript
-            }
-        }
-        
-        deepgram.onTranscriptionComplete = {
-            Task { @MainActor in
-                print("transcription complete")
-            }
-        }
     }
 }
