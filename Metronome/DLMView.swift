@@ -9,10 +9,6 @@ struct DLMView<AppState: Encodable & Sendable>: View {
     var deepgram: DeepgramService { model.deepgram }
     var dlm: DLMService
     var execute: ([DLMCommand<CommandArgs>]) -> ()
-
-    @State private var realtimeTranscript: String = ""
-    @State private var realtimeTranscriptBuffer: String = ""
-    @State private var isProcessingAudioCommands = false
     
     func process(prompt: String) {
         Task {
@@ -41,30 +37,16 @@ struct DLMView<AppState: Encodable & Sendable>: View {
         
         deepgram.onTranscriptReceived = { transcript in
             Task { @MainActor in
-                if !realtimeTranscriptBuffer.isEmpty {
-                    realtimeTranscriptBuffer += " "
+                if !model.manualCommand.isEmpty {
+                    model.manualCommand += " "
                 }
-                realtimeTranscriptBuffer += transcript
-                realtimeTranscript = realtimeTranscriptBuffer
+                model.manualCommand += transcript
             }
         }
         
         deepgram.onTranscriptionComplete = {
             Task { @MainActor in
-                isProcessingAudioCommands = true
-                
-                do {
-                    guard realtimeTranscript != "" else { return }
-                    let response: [DLMCommand<CommandArgs>] = try await dlm.processCommand(realtimeTranscript, for: CurrentState(bpm: metronome.tempo))
-                    metronome.executeCommands(response)
-                    guard let commands: [DLMCommand<CommandArgs>] = try? await dlm.processCommand(realtimeTranscriptBuffer, for: CurrentState(bpm: metronome.tempo)) else { return }
-                    metronome.executeCommands(commands)
-                    realtimeTranscript = ""
-                    realtimeTranscriptBuffer = ""
-                } catch {
-                    metronome.processingSteps.append(ProcessingStep(text: "Error: \(error.localizedDescription)", isComplete: true))
-                }
-                isProcessingAudioCommands = false
+                print("transcription complete")
             }
         }
     }
