@@ -4,7 +4,7 @@ import CompilerSwiftAI
 struct DLMView<AppState: Encodable & Sendable>: View {
     
     var state: AppState
-    var model = DLMViewModel()
+    @State var model = DLMViewModel()
     var metronome: Metronome
     var deepgram: DeepgramService { model.deepgram }
     var dlm: DLMService
