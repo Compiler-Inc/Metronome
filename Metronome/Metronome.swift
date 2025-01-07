@@ -10,10 +10,10 @@ class Metronome {
     let sampler = AppleSampler()
     var timer = Timer()
 
-    var processingSteps: [ProcessingStep] = []
+    var processingSteps: [DLMProcessingStep] = []
 
     public func addStep(_ text: String) {
-        processingSteps.append(ProcessingStep(text: text, isComplete: false))
+        processingSteps.append(DLMProcessingStep(text: text, isComplete: false))
     }
 
     public func completeLastStep() {
