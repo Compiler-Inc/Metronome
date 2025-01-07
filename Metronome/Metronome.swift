@@ -10,18 +10,6 @@ class Metronome {
     let sampler = AppleSampler()
     var timer = Timer()
 
-    var processingSteps: [DLMProcessingStep] = []
-
-    public func addStep(_ text: String) {
-        processingSteps.append(DLMProcessingStep(text: text, isComplete: false))
-    }
-
-    public func completeLastStep() {
-        if let lastIndex = processingSteps.indices.last {
-            processingSteps[lastIndex].isComplete = true
-        }
-    }
-
     @objc func fireTimer() {
         if let start = startTime, let target = targetTempo, let duration = targetDuration {
             let elapsedTime = Date().timeIntervalSince(start)
@@ -147,74 +135,51 @@ class Metronome {
 
 extension Metronome {
 
-    func executeCommands(_ commands: [DLMCommand<CommandArgs>]) {
-        addStep("Executing commands")
-        print("🎯 DLM executing commands: \(commands)")
-        completeLastStep()
-
-        for command in commands {
-            print("⚡️ Processing command: \(command)")
-            guard let metronomeCommand = MetronomeCommand.from(command) else {
-                print("❌ Failed to parse command: \(command)")
-                continue
+    func execute(command: DLMCommand<CommandArgs>) {
+        print("🎯 DLM executing command: \(command)")
+        
+        guard let metronomeCommand = MetronomeCommand.from(command) else {
+            print("❌ Failed to parse command: \(command)")
+            return
+        }
+        print("✅ Parsed command: \(metronomeCommand)")
+        
+        switch metronomeCommand {
+        case .play:
+            isPlaying = true
+            
+        case .stop:
+            isPlaying = false
+            
+        case .setTempo(let bpm):
+            tempo = bpm
+            
+        case .rampTempo(let bpm, let duration):
+            rampTempo(bpm: bpm, duration: duration)
+            
+        case .changeSound(let sound):
+            let s = GiantSound.allCases.first(where: {$0.description == sound})
+            if let note = s?.rawValue {
+                self.note = MIDINoteNumber(note)
             }
-            print("✅ Parsed command: \(metronomeCommand)")
-
-            switch metronomeCommand {
-            case .play:
-                addStep("Starting metronome")
-                isPlaying = true
-                completeLastStep()
-
-            case .stop:
-                addStep("Stopping metronome")
-                isPlaying = false
-                completeLastStep()
-
-            case .setTempo(let bpm):
-                addStep("Setting tempo to \(bpm) BPM")
-                tempo = bpm
-                completeLastStep()
-
-            case .rampTempo(let bpm, let duration):
-                addStep("Ramping tempo to \(bpm) BPM over \(duration) seconds")
-                rampTempo(bpm: bpm, duration: duration)
-                completeLastStep()
-
-            case .changeSound(let sound):
-                addStep("Setting sound to \(sound)")
-                let s = GiantSound.allCases.first(where: {$0.description == sound})
-                if let note = s?.rawValue {
-                    self.note = MIDINoteNumber(note)
-                }
-                completeLastStep()
-
-            case .setDownBeat(let sound):
-                addStep("Setting downbeat to \(sound)")
-                let s = GiantSound.allCases.first(where: {$0.description == sound})
-                if let note = s?.rawValue {
-                    startingNote = MIDINoteNumber(note)
-                }
-                completeLastStep()
-
-            case .setUpBeat(let sound):
-                addStep("Setting upbeat to \(sound)")
-                let s = GiantSound.allCases.first(where: {$0.description == sound})
-                if let note = s?.rawValue {
-                    accentNote = MIDINoteNumber(note)
-                }
-                completeLastStep()
-
-            case .setGapMeasures(let count):
-                addStep("Setting gap measures to \(count)")
-                gapMeasureCount = count
-                completeLastStep()
-
-            case .noOp:
-                addStep("NoOp")
-                print("⚪️ NoOp command received")
-                completeLastStep()
+            
+        case .setDownBeat(let sound):
+            let s = GiantSound.allCases.first(where: {$0.description == sound})
+            if let note = s?.rawValue {
+                startingNote = MIDINoteNumber(note)
             }
+            
+        case .setUpBeat(let sound):
+            let s = GiantSound.allCases.first(where: {$0.description == sound})
+            if let note = s?.rawValue {
+                accentNote = MIDINoteNumber(note)
+            }
+            
+        case .setGapMeasures(let count):
+            gapMeasureCount = count
+            
+        case .noOp:
+            print("⚪️ NoOp command received")
         }
         print("✨ Finished executing all commands")
     }
