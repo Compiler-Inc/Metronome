@@ -96,12 +96,8 @@ class Metronome {
         } catch let err {
             print("error: \(err)")
         }
-        
-        guard let input = engine.input else {
-            fatalError()
-        }
 
-        // Connect mixer to engine output
+        // Connect sampler to engine output
         engine.output = sampler
         
         setupSequencer()
