@@ -28,7 +28,11 @@ struct ContentView: View {
         #else
         VStack(spacing: 0) {
             MetronomeView(metronome: metronome)
-            DLMView(state: CurrentState(bpm: metronome.tempo), dlm: dlm, deepgram: deepgram, execute: metronome.executeCommands)
+            DLMView(state: CurrentState(bpm: metronome.tempo),
+                    dlm: dlm,
+                    deepgram: deepgram,
+                    describe: describe(command:),
+                    execute:  metronome.execute(command:))
         }
         #endif
     }
