@@ -41,3 +41,33 @@ enum MetronomeCommand: Sendable {
         }
     }
 }
+
+func describe(command: DLMCommand<CommandArgs>) -> String {
+    
+    guard let metronomeCommand = MetronomeCommand.from(command) else {
+        print("❌ Failed to parse command: \(command)")
+        return "Unknown command"
+    }
+    
+    switch metronomeCommand {
+        
+    case .play:
+        return "Starting metronome"
+    case .stop:
+        return "Stopping metronome"
+    case .setTempo(bpm: let bpm):
+        return "Setting tempo to \(bpm) BPM"
+    case .rampTempo(bpm: let bpm, duration: let duration):
+        return "Ramping tempo to \(bpm) BPM over \(duration) seconds"
+    case .changeSound(sound: let sound):
+        return "Setting sound to \(sound)"
+    case .setDownBeat(sound: let sound):
+        return "Setting downbeat to \(sound)"
+    case .setUpBeat(sound: let sound):
+        return "Setting upbeat to \(sound)"
+    case .setGapMeasures(count: let count):
+        return "Setting gap measures to \(count)"
+    case .noOp:
+        return "NoOp"
+    }
+}
