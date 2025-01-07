@@ -7,6 +7,7 @@ struct DLMView<AppState: Encodable & Sendable, Args: Decodable & Sendable>: View
     @State var model = DLMViewModel()
     var dlm: DLMService
     var execute: ([DLMCommand<Args>]) -> ()
+    var deepgram: DeepgramService?
     
     func process(prompt: String) {
         Task {
@@ -26,5 +27,9 @@ struct DLMView<AppState: Encodable & Sendable, Args: Decodable & Sendable>: View
         }
         .frame(minWidth: 200)
         .background(DLMColors.primary10)
+        .onAppear {
+            model.deepgram = deepgram
+            model.setupDeepgramHandlers()
+        }
     }
 }

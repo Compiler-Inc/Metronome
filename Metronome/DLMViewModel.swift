@@ -12,7 +12,7 @@ import AudioKit
 @Observable
 class DLMViewModel {
     
-    let deepgram = DeepgramService(apiKey: "95536b5a0b268e8d3392854a7d4858386278af2c")
+    var deepgram: DeepgramService?
     private let audioEngine = AudioEngine()
     private var promptTap: RawDataTap?
     private let silencer = Mixer()
@@ -21,7 +21,12 @@ class DLMViewModel {
     
     var manualCommand = ""
     
-    init() {
+    func setupDeepgramHandlers() {
+        
+        guard let deepgram else {
+            return
+        }
+        
         deepgram.onTranscriptReceived = { transcript in
             Task { @MainActor in
                 if !self.manualCommand.isEmpty {
@@ -50,6 +55,11 @@ class DLMViewModel {
     
     func startRealtimeTranscription() {
         
+        guard let deepgram else {
+            print("No deepgram")
+            return
+        }
+        
         guard let input = audioEngine.input else {
             print("No input!")
             return
@@ -67,7 +77,7 @@ class DLMViewModel {
         }
         
         promptTap = RawDataTap(input, bufferSize: 4096) { buffer in
-            self.deepgram.sendAudioData(buffer)
+            deepgram.sendAudioData(buffer)
         }
         promptTap?.start()
         
@@ -76,6 +86,12 @@ class DLMViewModel {
     }
     
     func stopRealtimeTranscription() {
+        
+        guard let deepgram else {
+            print("No deepgram")
+            return
+        }
+        
         promptTap?.stop()
         promptTap = nil
         deepgram.stopRealtimeTranscription()
