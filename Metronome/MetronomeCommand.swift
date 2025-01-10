@@ -11,7 +11,7 @@ enum MetronomeCommand: Sendable {
     case setGapMeasures(count: Int)
     case noOp
 
-    static func from(_ command: DLMCommand<CommandArgs>) -> MetronomeCommand? {
+    static func from(_ command: Command<CommandArgs>) -> MetronomeCommand? {
         switch command.command {
         case "play":
             return .play
@@ -42,7 +42,7 @@ enum MetronomeCommand: Sendable {
     }
 }
 
-func describe(command: DLMCommand<CommandArgs>) -> String {
+func describe(command: Command<CommandArgs>) -> String {
     
     guard let metronomeCommand = MetronomeCommand.from(command) else {
         print("❌ Failed to parse command: \(command)")

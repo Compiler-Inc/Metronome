@@ -135,7 +135,7 @@ class Metronome {
 
 extension Metronome {
 
-    func execute(command: DLMCommand<CommandArgs>) {
+    func execute(command: Command<CommandArgs>) {
         print("🎯 DLM executing command: \(command)")
         
         guard let metronomeCommand = MetronomeCommand.from(command) else {
