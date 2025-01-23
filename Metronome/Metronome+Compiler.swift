@@ -8,13 +8,13 @@ extension Metronome {
     func execute(command: Command<CommandArgs>) {
         print("🎯 DLM executing command: \(command)")
         
-        guard let metronomeCommand = CompilerFunction.from(command) else {
+        guard let function = CompilerFunction.from(command) else {
             print("❌ Failed to parse command: \(command)")
             return
         }
-        print("✅ Parsed command: \(metronomeCommand)")
+        print("✅ Parsed command: \(function)")
         
-        switch metronomeCommand {
+        switch function {
         case .play:
             isPlaying = true
             
