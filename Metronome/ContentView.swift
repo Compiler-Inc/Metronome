@@ -12,9 +12,9 @@ struct ContentView: View {
         #if os(macOS)
         HStack(spacing: 0) {
             ChatView(state: CurrentState(bpm: metronome.tempo),
-                    dlm: dlm,
-                    describe: describe(command:),
-                    execute: metronome.execute(command:))
+                     dlm: dlm,
+                     describe: CompilerFunction.describe(command:),
+                     execute: metronome.execute(command:))
             MetronomeView(metronome: metronome)
         }
         .buttonStyle(.borderless)
@@ -23,7 +23,7 @@ struct ContentView: View {
             MetronomeView(metronome: metronome)
             ChatView(state: CurrentState(bpm: metronome.tempo),
                      dlm: dlm,
-                     describe: describe(command:),
+                     describe: CompilerFunction.describe(command:),
                      execute:  metronome.execute(command:))
         }
         #endif

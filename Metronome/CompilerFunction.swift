@@ -45,7 +45,7 @@ enum CompilerFunction: Sendable {
     
     /// This is returned if the command cound not be converted into appropriate functions
     case noOp
-
+    
     static func from(_ command: Command<CommandArgs>) -> CompilerFunction? {
         switch command.command {
         case "play":
@@ -75,34 +75,35 @@ enum CompilerFunction: Sendable {
             return nil
         }
     }
-}
-
-func describe(command: Command<CommandArgs>) -> String {
     
-    guard let metronomeCommand = CompilerFunction.from(command) else {
-        print("❌ Failed to parse command: \(command)")
-        return "Unknown command"
-    }
     
-    switch metronomeCommand {
+    static func describe(command: Command<CommandArgs>) -> String {
         
-    case .play:
-        return "Starting metronome"
-    case .stop:
-        return "Stopping metronome"
-    case .setTempo(bpm: let bpm):
-        return "Setting tempo to \(bpm) BPM"
-    case .rampTempo(bpm: let bpm, duration: let duration):
-        return "Ramping tempo to \(bpm) BPM over \(duration) seconds"
-    case .changeSound(sound: let sound):
-        return "Setting sound to \(sound)"
-    case .setDownBeat(sound: let sound):
-        return "Setting downbeat to \(sound)"
-    case .setUpBeat(sound: let sound):
-        return "Setting upbeat to \(sound)"
-    case .setGapMeasures(count: let count):
-        return "Setting gap measures to \(count)"
-    case .noOp:
-        return "NoOp"
+        guard let metronomeCommand = CompilerFunction.from(command) else {
+            print("❌ Failed to parse command: \(command)")
+            return "Unknown command"
+        }
+        
+        switch metronomeCommand {
+            
+        case .play:
+            return "Starting metronome"
+        case .stop:
+            return "Stopping metronome"
+        case .setTempo(bpm: let bpm):
+            return "Setting tempo to \(bpm) BPM"
+        case .rampTempo(bpm: let bpm, duration: let duration):
+            return "Ramping tempo to \(bpm) BPM over \(duration) seconds"
+        case .changeSound(sound: let sound):
+            return "Setting sound to \(sound)"
+        case .setDownBeat(sound: let sound):
+            return "Setting downbeat to \(sound)"
+        case .setUpBeat(sound: let sound):
+            return "Setting upbeat to \(sound)"
+        case .setGapMeasures(count: let count):
+            return "Setting gap measures to \(count)"
+        case .noOp:
+            return "NoOp"
+        }
     }
 }
