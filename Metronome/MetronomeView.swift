@@ -1,9 +1,4 @@
-//
-//  MetronomeView.swift
-//  Metronome
-//
-//  Created by Aurelius Prochazka on 1/6/25.
-//
+//  Copyright © 2025 Compiler, Inc. All rights reserved.
 
 import SwiftUI
 
@@ -43,6 +38,8 @@ struct MetronomeView: View {
                 }
                 
                 LabeledContent("Target Tempo", value: "\(metronome.targetTempo ?? metronome.tempo)")
+                
+                LabeledContent("Duration", value: "\(metronome.targetDuration ?? 0)")
                 
                 LabeledContent("Pulse", value: "\(GiantSound(rawValue: Int(metronome.note)) ?? .snap)")
                 LabeledContent("Downbeat", value: "\(GiantSound(rawValue: Int(metronome.startingNote ?? 0)) ?? .none)")

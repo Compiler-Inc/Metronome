@@ -1,9 +1,4 @@
-//
-//  MetronomeUITestsLaunchTests.swift
-//  MetronomeUITests
-//
-//  Created by Aurelius Prochazka on 12/10/24.
-//
+//  Copyright © 2025 Compiler, Inc. All rights reserved.
 
 import XCTest
 

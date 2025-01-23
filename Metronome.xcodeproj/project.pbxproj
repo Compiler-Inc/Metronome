@@ -29,6 +29,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		C42330622D31EDC200DD455C /* CompilerSwiftAI */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = CompilerSwiftAI; path = ../CompilerSwiftAI; sourceTree = SOURCE_ROOT; };
 		F181A9FB2D093CED006E3941 /* Metronome.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Metronome.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F181AA0E2D093CEF006E3941 /* MetronomeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MetronomeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F181AA182D093CEF006E3941 /* MetronomeUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MetronomeUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -95,6 +96,7 @@
 		F181A9F22D093CED006E3941 = {
 			isa = PBXGroup;
 			children = (
+				C42330622D31EDC200DD455C /* CompilerSwiftAI */,
 				F181A9FD2D093CED006E3941 /* Metronome */,
 				F181AA112D093CEF006E3941 /* MetronomeTests */,
 				F181AA1B2D093CEF006E3941 /* MetronomeUITests */,
@@ -436,6 +438,7 @@
 				INFOPLIST_FILE = Metronome/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Microphone used for prompting the metronome";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "YOu know";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -479,6 +482,7 @@
 				INFOPLIST_FILE = Metronome/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Microphone used for prompting the metronome";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "YOu know";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
