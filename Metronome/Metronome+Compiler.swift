@@ -1,20 +1,18 @@
-//  Copyright © 2025 Compiler, Inc. All rights reserved.
-
 import AudioKit
 import CompilerSwiftAI
 
 extension Metronome {
 
-    func execute(command: Command<CommandArgs>) {
-        print("🎯 DLM executing command: \(command)")
+    func execute(function: Function<MetronomeParameters>) {
+        print("🎯 Executing fucntion: \(function)")
         
-        guard let function = CompilerFunction.from(command) else {
-            print("❌ Failed to parse command: \(command)")
+        guard let metronomeFunction = CompilerFunction.from(function) else {
+            print("❌ Failed to parse function: \(function)")
             return
         }
-        print("✅ Parsed command: \(function)")
+        print("✅ Parsed function: \(metronomeFunction)")
         
-        switch function {
+        switch metronomeFunction {
         case .play:
             isPlaying = true
             
@@ -49,19 +47,19 @@ extension Metronome {
             gapMeasureCount = count
             
         case .noOp:
-            print("⚪️ NoOp command received")
+            print("⚪️ NoOp received")
         }
-        print("✨ Finished executing all commands")
+        print("✨ Finished executing all functions")
     }
 }
 
-struct CommandArgs: Codable, Sendable {
+struct MetronomeParameters: Codable, Sendable {
     let bpm: Double?
     let duration: Double?
     let sound: String?
     let count: Int?
 }
 
-struct CurrentState: Codable, Sendable {
+struct MetronomeState: Codable, Sendable {
     let bpm: Double
 }

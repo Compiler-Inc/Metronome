@@ -43,33 +43,33 @@ enum CompilerFunction: Sendable {
     ///   - count: The number of measures of silence to be played
     case setGapMeasures(count: Int)
     
-    /// This is returned if the command cound not be converted into appropriate functions
+    /// This is returned if the function cound not be converted into appropriate functions
     case noOp
     
-    static func from(_ command: Command<CommandArgs>) -> CompilerFunction? {
-        switch command.command {
+    static func from(_ function: Function<MetronomeParameters>) -> CompilerFunction? {
+        switch function.name {
         case "play":
             return .play
         case "stop":
             return .stop
         case "setTempo":
-            guard let bpm = command.args?.bpm else { return nil }
+            guard let bpm = function.parameters?.bpm else { return nil }
             return .setTempo(bpm: bpm)
         case "rampTempo":
-            guard let bpm = command.args?.bpm else { return nil }
-            guard let duration = command.args?.duration else { return nil }
+            guard let bpm = function.parameters?.bpm else { return nil }
+            guard let duration = function.parameters?.duration else { return nil }
             return .rampTempo(bpm: bpm, duration: duration)
         case "changeSound":
-            guard let sound = command.args?.sound else { return nil }
+            guard let sound = function.parameters?.sound else { return nil }
             return .changeSound(sound: sound)
         case "setDownBeat":
-            guard let sound = command.args?.sound else { return nil }
+            guard let sound = function.parameters?.sound else { return nil }
             return .setDownBeat(sound: sound)
         case "setUpBeat":
-            guard let sound = command.args?.sound else { return nil }
+            guard let sound = function.parameters?.sound else { return nil }
             return .setUpBeat(sound: sound)
         case "setGapMeasures":
-            guard let count = command.args?.count else { return nil }
+            guard let count = function.parameters?.count else { return nil }
             return .setGapMeasures(count: count)
         default:
             return nil
@@ -77,14 +77,14 @@ enum CompilerFunction: Sendable {
     }
     
     
-    static func describe(command: Command<CommandArgs>) -> String {
+    static func describe(function: Function<MetronomeParameters>) -> String {
         
-        guard let metronomeCommand = CompilerFunction.from(command) else {
-            print("❌ Failed to parse command: \(command)")
-            return "Unknown command"
+        guard let metronomeFunction = CompilerFunction.from(function) else {
+            print("❌ Failed to parse function: \(function)")
+            return "Unknown function"
         }
         
-        switch metronomeCommand {
+        switch metronomeFunction {
             
         case .play:
             return "Starting metronome"
