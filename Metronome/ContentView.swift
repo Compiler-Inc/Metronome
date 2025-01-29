@@ -5,8 +5,8 @@ import CompilerSwiftAI
 
 struct ContentView: View {
     @State var metronome = Metronome()
-    @State var service = Service(apiKey: "371f0e448174ad84a4cfd0af924a1b1638bdf99cfe8e91ad2b1c23df925cb8a1",
-                                appId: "1561de0c-8e1c-4ace-a870-ac0baecf40f6")
+    @State var service = Service(apiKey: "a2481503d596614819c95f06eb33e9bed7145aec198d1cd319bcfad0765b53a3",
+                                appId: "eefb224c-f823-4190-881e-e54484d2cd9d")
 
     var body: some View {
         #if os(macOS)
