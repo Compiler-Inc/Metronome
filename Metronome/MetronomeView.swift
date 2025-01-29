@@ -15,26 +15,10 @@ struct MetronomeView: View {
             Form {
                 
                 LabeledContent("Tempo") {
-                    HStack {
-                        Button(action: {
-                            metronome.tempo -= 10.0
-                        }) {
-                            Image(systemName: "minus.circle.fill")
-                                .font(.title)
-                        }
-                        
-                        Text("\(Int(metronome.tempo))")
-                            .font(.system(size: 48, weight: .bold, design: .rounded))
-                            .monospacedDigit()
-                            .frame(width: 100)
-                        
-                        Button(action: {
-                            metronome.tempo += 10.0
-                        }) {
-                            Image(systemName: "plus.circle.fill")
-                                .font(.title)
-                        }
-                    }
+                    Text("\(Int(metronome.tempo))")
+                        .font(.system(size: 48, weight: .bold, design: .rounded))
+                        .monospacedDigit()
+                        .frame(width: 100)
                 }
                 
                 LabeledContent("Target Tempo", value: "\(metronome.targetTempo ?? metronome.tempo)")
