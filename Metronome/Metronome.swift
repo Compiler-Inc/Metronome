@@ -103,8 +103,6 @@ class Metronome {
         timer.invalidate()
         timer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(fireTimer), userInfo: nil, repeats: true)
 
-
-        
         sequencer.tracks.removeAll()
 
         // Add tracks to sequencer

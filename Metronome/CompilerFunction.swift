@@ -47,7 +47,7 @@ enum CompilerFunction: Sendable {
     case noOp
     
     static func from(_ function: Function<MetronomeParameters>) -> CompilerFunction? {
-        switch function.name {
+        switch function.id {
         case "play":
             return .play
         case "stop":
@@ -73,37 +73,6 @@ enum CompilerFunction: Sendable {
             return .setGapMeasures(count: count)
         default:
             return nil
-        }
-    }
-    
-    
-    static func describe(function: Function<MetronomeParameters>) -> String {
-        
-        guard let metronomeFunction = CompilerFunction.from(function) else {
-            print("❌ Failed to parse function: \(function)")
-            return "Unknown function"
-        }
-        
-        switch metronomeFunction {
-            
-        case .play:
-            return "Starting metronome"
-        case .stop:
-            return "Stopping metronome"
-        case .setTempo(bpm: let bpm):
-            return "Setting tempo to \(bpm) BPM"
-        case .rampTempo(bpm: let bpm, duration: let duration):
-            return "Ramping tempo to \(bpm) BPM over \(duration) seconds"
-        case .changeSound(sound: let sound):
-            return "Setting sound to \(sound)"
-        case .setDownBeat(sound: let sound):
-            return "Setting downbeat to \(sound)"
-        case .setUpBeat(sound: let sound):
-            return "Setting upbeat to \(sound)"
-        case .setGapMeasures(count: let count):
-            return "Setting gap measures to \(count)"
-        case .noOp:
-            return "NoOp"
         }
     }
 }

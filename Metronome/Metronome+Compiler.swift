@@ -2,7 +2,6 @@ import AudioKit
 import CompilerSwiftAI
 
 extension Metronome {
-
     func execute(function: Function<MetronomeParameters>) {
         print("🎯 Executing fucntion: \(function)")
         
