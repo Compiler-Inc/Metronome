@@ -5,11 +5,17 @@ import STKAudioKit
 import SwiftUI
 
 struct ShakerMetronomeData {
+    var note: MIDINoteNumber = MIDINoteNumber(GiantSound.closedHiHat.rawValue)
+    var startingNote: MIDINoteNumber?
+    var accentNote: MIDINoteNumber?
+    var tempo: Double = 120.0
+    var startTemp: Double = 120.0
+    var gapMeasureCount: Int = 0
+    var startTime: Date?
+    var targetDuration: TimeInterval?
+    var targetTempo: Double?
     var isPlaying = false
-    var tempo: BPM = 120
     var timeSignatureTop: Int = 4
-    var downbeatNoteNumber = MIDINoteNumber(0)
-    var beatNoteNumber = MIDINoteNumber(GiantSound.closedHiHat.rawValue)
     var beatNoteVelocity = 100.0
     var currentBeat = 0
 }
@@ -47,10 +53,10 @@ class ShakerConductor: HasAudioEngine {
         track.length = Double(data.timeSignatureTop)
 
         track.clear()
-        track.sequence.add(noteNumber: data.downbeatNoteNumber, position: 0.0, duration: 0.4)
+        track.sequence.add(noteNumber: data.note, position: 0.0, duration: 0.4)
         let vel = MIDIVelocity(Int(data.beatNoteVelocity))
         for beat in 0 ..< data.timeSignatureTop {
-            track.sequence.add(noteNumber: data.beatNoteNumber, velocity: vel, position: Double(beat), duration: 0.1)
+            track.sequence.add(noteNumber: data.note, velocity: vel, position: Double(beat), duration: 0.1)
         }
 
         track = sequencer.tracks[1]
@@ -105,27 +111,6 @@ struct STKView: View {
                     Text("Tempo: \(Int(conductor.data.tempo))")
                     Slider(value: $conductor.data.tempo, in: 60.0 ... 240.0, label: {
                         Text("Tempo")
-                    })
-                }
-
-                VStack {
-                    Stepper("Downbeat: \(name(noteNumber: conductor.data.downbeatNoteNumber))", onIncrement: {
-                        if conductor.data.downbeatNoteNumber <= 21 {
-                            conductor.data.downbeatNoteNumber += 1
-                        }
-                    }, onDecrement: {
-                        if conductor.data.downbeatNoteNumber >= 1 {
-                            conductor.data.downbeatNoteNumber -= 1
-                        }
-                    })
-                    Stepper("Other beats: \(name(noteNumber: conductor.data.beatNoteNumber))", onIncrement: {
-                        if conductor.data.beatNoteNumber <= 21 {
-                            conductor.data.beatNoteNumber += 1
-                        }
-                    }, onDecrement: {
-                        if conductor.data.beatNoteNumber >= 1 {
-                            conductor.data.beatNoteNumber -= 1
-                        }
                     })
                 }
             }
