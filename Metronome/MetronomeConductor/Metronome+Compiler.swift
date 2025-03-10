@@ -1,3 +1,5 @@
+//  Copyright © 2025 Compiler, Inc. All rights reserved.
+
 import AudioKit
 import CompilerSwiftAI
 

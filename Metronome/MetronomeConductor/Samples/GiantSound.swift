@@ -1,3 +1,4 @@
+//  Copyright © 2025 Compiler, Inc. All rights reserved.
 import AudioKit
 
 enum GiantSound: Int, CaseIterable {
