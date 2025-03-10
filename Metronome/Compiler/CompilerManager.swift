@@ -38,3 +38,15 @@ class CompilerManager {
         }
     }
 }
+
+extension CompilerManager {
+    
+    func processVoicePrompt(_ prompt: String) async throws {
+        let functions: [Function<MetronomeParameters>] = try await client.processFunction(prompt: prompt, for: MetronomeState(bpm: 120))
+        for function in functions {
+//            await execute(function: function)
+        }
+    }
+}
+
+

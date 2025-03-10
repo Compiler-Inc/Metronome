@@ -61,6 +61,6 @@ struct MetronomeParameters: Codable, Sendable {
     let count: Int?
 }
 
-struct MetronomeState: Codable, Sendable {
+struct MetronomeState: AppStateProtocol {
     let bpm: Double
 }
