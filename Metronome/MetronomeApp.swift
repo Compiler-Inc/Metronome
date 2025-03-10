@@ -29,7 +29,7 @@ struct MetronomeApp: App {
                 ProgressView("Checking authentication ...")
                     .progressViewStyle(.circular)
             } else if compiler.isAuthenticated {
-                STKView()
+                MetronomeView()
             } else {
                 VStack {
                     SignInWithAppleButton(
