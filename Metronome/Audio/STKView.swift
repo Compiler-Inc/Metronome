@@ -9,7 +9,7 @@ struct ShakerMetronomeData {
     var startingNote: MIDINoteNumber?
     var accentNote: MIDINoteNumber?
     var tempo: Double = 120.0
-    var startTemp: Double = 120.0
+    var startTempo: Double = 120.0
     var gapMeasureCount: Int = 0
     var startTime: Date?
     var targetDuration: TimeInterval?
@@ -45,6 +45,13 @@ class ShakerConductor: HasAudioEngine {
                 self.data.currentBeat = beat
             }
         }
+    }
+    
+    func rampTempo(bpm: Double, duration: TimeInterval) {
+        data.startTempo = data.tempo
+        data.targetTempo = bpm
+        data.targetDuration = duration
+        data.startTime = Date()
     }
 
     func updateSequences() {
