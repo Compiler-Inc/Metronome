@@ -13,13 +13,13 @@ extension Metronome {
         
         switch metronomeFunction {
         case .play:
-            isPlaying = true
+            data.isPlaying = true
             
         case .stop:
-            isPlaying = false
+            data.isPlaying = false
             
         case .setTempo(let bpm):
-            tempo = bpm
+            data.tempo = bpm
             
         case .rampTempo(let bpm, let duration):
             rampTempo(bpm: bpm, duration: duration)
@@ -27,23 +27,23 @@ extension Metronome {
         case .changeSound(let sound):
             let s = GiantSound.allCases.first(where: {$0.description == sound})
             if let note = s?.rawValue {
-                self.note = MIDINoteNumber(note)
+                self.data.note = MIDINoteNumber(note)
             }
             
         case .setDownBeat(let sound):
             let s = GiantSound.allCases.first(where: {$0.description == sound})
             if let note = s?.rawValue {
-                startingNote = MIDINoteNumber(note)
+                data.startingNote = MIDINoteNumber(note)
             }
             
         case .setUpBeat(let sound):
             let s = GiantSound.allCases.first(where: {$0.description == sound})
             if let note = s?.rawValue {
-                accentNote = MIDINoteNumber(note)
+                data.accentNote = MIDINoteNumber(note)
             }
             
         case .setGapMeasures(let count):
-            gapMeasureCount = count
+            data.gapMeasureCount = count
             
         case .noOp:
             print("⚪️ NoOp received")

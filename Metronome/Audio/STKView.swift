@@ -8,23 +8,23 @@ struct ShakerMetronomeData {
     var isPlaying = false
     var tempo: BPM = 120
     var timeSignatureTop: Int = 4
-    var downbeatNoteNumber = MIDINoteNumber(6)
-    var beatNoteNumber = MIDINoteNumber(10)
+    var downbeatNoteNumber = MIDINoteNumber(0)
+    var beatNoteNumber = MIDINoteNumber(GiantSound.closedHiHat.rawValue)
     var beatNoteVelocity = 100.0
     var currentBeat = 0
 }
 
-class ShakerConductor: ObservableObject, HasAudioEngine {
+@Observable
+class ShakerConductor: HasAudioEngine {
     let engine = AudioEngine()
-    let shaker = Shaker()
+    let sampler = AppleSampler()
     var callbackInst = CallbackInstrument()
-    let reverb: Reverb
     let mixer = Mixer()
     var sequencer = Sequencer()
 
     private let beatUpdateQueue = DispatchQueue(label: "com.metronome.beatUpdate")
 
-    @Published var data = ShakerMetronomeData() {
+    var data = ShakerMetronomeData() {
         didSet {
             data.isPlaying ? sequencer.play() : sequencer.stop()
             sequencer.tempo = data.tempo
@@ -49,7 +49,7 @@ class ShakerConductor: ObservableObject, HasAudioEngine {
         track.clear()
         track.sequence.add(noteNumber: data.downbeatNoteNumber, position: 0.0, duration: 0.4)
         let vel = MIDIVelocity(Int(data.beatNoteVelocity))
-        for beat in 1 ..< data.timeSignatureTop {
+        for beat in 0 ..< data.timeSignatureTop {
             track.sequence.add(noteNumber: data.beatNoteNumber, velocity: vel, position: Double(beat), duration: 0.1)
         }
 
@@ -62,12 +62,14 @@ class ShakerConductor: ObservableObject, HasAudioEngine {
     }
 
     init() {
-        let fader = Fader(shaker)
-        fader.gain = 20.0
+        let soundFont = "Giant"
+        do {
+            try sampler.loadPercussiveSoundFont(soundFont)
+        } catch let err {
+            print("error: \(err)")
+        }
 
-        reverb = Reverb(fader)
-
-        _ = sequencer.addTrack(for: shaker)
+        _ = sequencer.addTrack(for: sampler)
 
         callbackInst = CallbackInstrument(midiCallback: { [weak self] _, beat, _ in
             self?.updateCurrentBeat(Int(beat))
@@ -77,7 +79,7 @@ class ShakerConductor: ObservableObject, HasAudioEngine {
         _ = sequencer.addTrack(for: callbackInst)
         updateSequences()
 
-        mixer.addInput(reverb)
+        mixer.addInput(sampler)
         mixer.addInput(callbackInst)
 
         engine.output = mixer
@@ -85,10 +87,10 @@ class ShakerConductor: ObservableObject, HasAudioEngine {
 }
 
 struct STKView: View {
-    @StateObject var conductor = ShakerConductor()
+    @State var conductor = ShakerConductor()
 
     func name(noteNumber: MIDINoteNumber) -> String {
-        let str = "\(ShakerType(rawValue: noteNumber)!)"
+        let str = "hihat"
         return str.titleCase()
     }
 
@@ -126,13 +128,6 @@ struct STKView: View {
                         }
                     })
                 }
-
-                VStack {
-                    Text("Velocity")
-                    Slider(value: $conductor.data.beatNoteVelocity, in: 0.0 ... 127.0, label: {
-                        Text("Velocity")
-                    })
-                }
             }
             Spacer()
 
@@ -154,7 +149,7 @@ struct STKView: View {
                 }
             }.padding()
 
-            FFTView(conductor.reverb)
+//            FFTView(conductor.reverb)
         }
         .navigationTitle("STK Demo")
         .onAppear {

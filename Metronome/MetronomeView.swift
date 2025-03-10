@@ -15,28 +15,28 @@ struct MetronomeView: View {
             Form {
                 
                 LabeledContent("Tempo") {
-                    Text("\(Int(metronome.tempo))")
+                    Text("\(Int(metronome.data.tempo))")
                         .font(.system(size: 48, weight: .bold, design: .rounded))
                         .monospacedDigit()
                         .frame(width: 100)
                 }
                 
-                LabeledContent("Target Tempo", value: "\(metronome.targetTempo ?? metronome.tempo)")
+                LabeledContent("Target Tempo", value: "\(metronome.data.targetTempo ?? metronome.data.tempo)")
                 
-                LabeledContent("Duration", value: "\(metronome.targetDuration ?? 0)")
+                LabeledContent("Duration", value: "\(metronome.data.targetDuration ?? 0)")
                 
-                LabeledContent("Pulse", value: "\(GiantSound(rawValue: Int(metronome.note)) ?? .snap)")
-                LabeledContent("Downbeat", value: "\(GiantSound(rawValue: Int(metronome.startingNote ?? 0)) ?? .none)")
-                LabeledContent("Upbeat", value: "\(GiantSound(rawValue: Int(metronome.accentNote ?? 0)) ?? .none)")
+                LabeledContent("Pulse", value: "\(GiantSound(rawValue: Int(metronome.data.note)) ?? .snap)")
+                LabeledContent("Downbeat", value: "\(GiantSound(rawValue: Int(metronome.data.startingNote ?? 0)) ?? .none)")
+                LabeledContent("Upbeat", value: "\(GiantSound(rawValue: Int(metronome.data.accentNote ?? 0)) ?? .none)")
                     .monospacedDigit()
-                LabeledContent("Gap Measures", value: "\(metronome.gapMeasureCount)")
+                LabeledContent("Gap Measures", value: "\(metronome.data.gapMeasureCount)")
                 Button(action: {
-                    metronome.isPlaying.toggle()
+                    metronome.data.isPlaying.toggle()
                 }) {
-                    Image(systemName: metronome.isPlaying ? "stop" : "play")
+                    Image(systemName: metronome.data.isPlaying ? "stop" : "play")
                         .resizable()
                         .frame(width: 42, height: 42)
-                        .foregroundColor(metronome.isPlaying ? .red : .green)
+                        .foregroundColor(metronome.data.isPlaying ? .red : .green)
                 }
             }
         }
