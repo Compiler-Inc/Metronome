@@ -14,18 +14,13 @@ Before setting up this project, you'll need to:
 
 ### 2. Configure Sign in with Apple
 
-This app uses Sign in with Apple for authentication. You'll need to:
-
-1. Change the bundle identifier in the Xcode project to your own unique identifier
-2. Enable Sign in with Apple for this bundle identifier
-3. Generate the necessary certificates
-4. Configure your authentication settings on the Compiler developer dashboard
-
-The complete authentication setup process is documented in detail at:
+This app uses Sign in with Apple for authentication. The complete authentication setup process is documented in detail at:
 [https://docs.compiler.inc/features/auth](https://docs.compiler.inc/features/auth)
 
 
-### 3. Update the functions inside the app you just made on the Compiler developer dashboard
+### 3. Update your app on the Compiler developer dashboard
+
+Psate the following into "Available Functions"
 
 ```
 [
