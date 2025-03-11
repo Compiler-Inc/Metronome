@@ -170,7 +170,3 @@ enum CompilerFunction: Decodable, Sendable {
         }
     }
 }
-
-struct MetronomeState: AppStateProtocol {
-    let bpm: Double
-}

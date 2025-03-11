@@ -6,6 +6,7 @@ import AudioKitEX
 import AudioKitUI
 import STKAudioKit
 import SwiftUI
+import CompilerSwiftAI
 
 struct MetronomeData {
     var note: MIDINoteNumber = MIDINoteNumber(GiantSound.closedHiHat.rawValue)
