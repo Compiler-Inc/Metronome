@@ -1,4 +1,3 @@
-//
 import Foundation
 import Transcriber
 import Speech
@@ -7,12 +6,21 @@ import Speech
 class TranscriberService: Transcribable {
     var authStatus: SFSpeechRecognizerAuthorizationStatus = .notDetermined
     public var isRecording: Bool = false
-    public var transcriptionComplete: Bool = false
+    public var transcriptionComplete: Bool = false {
+        didSet {
+            if transcriptionComplete, let completion = transcriptionCompletion {
+                completion(transcribedText)
+                transcriptionCompletion = nil
+            }
+        }
+    }
     public var transcribedText: String = ""
     public var rmsValue: Float = 0
     var error: (any Error)?
     public let transcriber: Transcriber?
     private var recordingTask: Task<Void, Never>?
+    
+    private var transcriptionCompletion: ((String) -> Void)?
     
     init() {
         self.transcriber = Transcriber(config: TranscriberConfiguration(silenceThreshold: 0.01), debugLogging: true)
@@ -74,5 +82,40 @@ class TranscriberService: Transcribable {
                 }
             }
         }
+    }
+    public func recordAndTranscribe() async -> String {
+        // If already recording, stop and get the result
+        if isRecording {
+            toggleRecording() // Stop the recording
+            // Wait a bit for transcriptionComplete to be set
+            try? await Task.sleep(for: .milliseconds(100))
+            return transcribedText
+        }
+        
+        // Otherwise start a new recording session
+        return await withCheckedContinuation { continuation in
+            // Reset the transcribed text when starting a new recording
+            transcribedText = ""
+            transcriptionComplete = false
+            
+            // Set the completion handler to resume the continuation
+            onTranscriptionComplete { text in
+                continuation.resume(returning: text)
+            }
+            
+            // Start recording
+            toggleRecording()
+        }
+    }
+    
+    public func onTranscriptionComplete(perform action: @escaping (String) -> Void) {
+        // If already complete, execute immediately
+        if transcriptionComplete {
+            action(transcribedText)
+            return
+        }
+        
+        // Replace any existing completion handler with the new one
+        transcriptionCompletion = action
     }
 }

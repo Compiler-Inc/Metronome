@@ -8,7 +8,7 @@ import Transcriber
 final class MetronomeViewModel {
     private var compiler: CompilerManager
     private var conductor: MetronomeConductor
-    private var transcriber: TranscriberService
+    public var transcriber: TranscriberService
     
     var metronome: MetronomeState!
     
@@ -18,6 +18,8 @@ final class MetronomeViewModel {
         self.transcriber = TranscriberService()
         self.metronome = MetronomeState(conductor: conductor)
     }
+    
+    public var isProcessingPrompt: Bool = false
     
     @Observable
     class MetronomeState {
@@ -64,18 +66,53 @@ final class MetronomeViewModel {
         }
     }
     
-}
+    @MainActor
+    func processTranscribedText(_ text: String) async {
+        // Skip processing if text is empty
+        guard !text.isEmpty else { return }
+        
+        // This is where you'll implement your processing logic
+        print("Processing transcribed text: \(text)")
 
-//MARK: - Metronome State
-extension MetronomeViewModel {
+        do {
+            let functions = try await compiler.processVoicePrompt(text)
+            
+            for function in functions {
+                conductor.execute(function: function)
+            }
+        } catch {
+            // Handle any errors
+            print("Error processing transcription: \(error.localizedDescription)")
+        }
+    }
     
+    // Record speech and process the transcription
+    @MainActor
+    func toggleTranscription() async {
+        // If we're already recording, just stop recording
+        if transcriber.isRecording {
+            transcriber.toggleRecording()
+            return
+        }
+        
+        // Otherwise, start a new recording session and process the result
+        isProcessingPrompt = true
+        defer { isProcessingPrompt = false }
+        
+        let transcribedText = await transcriber.recordAndTranscribe()
+        
+        // Process the text
+        if !transcribedText.isEmpty {
+            await processTranscribedText(transcribedText)
+        }
+    }
 }
 
 struct MetronomeView: View {
     // Customizable light color
     @State private var lightColor = Color.red
     @State private var viewModel: MetronomeViewModel
-    
+        
     init(compiler: CompilerManager) {
         _viewModel = State(initialValue: MetronomeViewModel(compiler: compiler))
     }
@@ -122,10 +159,26 @@ struct MetronomeView: View {
                     .background(Circle().fill(Color.gray.opacity(0.2)))
             }
             .padding()
+            
+            Spacer()
+            SpeechButton(
+                isRecording: viewModel.transcriber.isRecording,
+                rmsValue: viewModel.transcriber.rmsValue,
+                isProcessing: viewModel.isProcessingPrompt,
+                supportsThinkingState: true,
+                onTap: {
+                    Task {
+                        await viewModel.toggleTranscription()
+                    }
+                }
+            )
         }
         .padding()
         .onAppear {
             viewModel.metronome.start()
+            Task {
+                try await viewModel.transcriber.requestAuthorization()
+            }
         }
         .onDisappear {
             viewModel.metronome.stop()

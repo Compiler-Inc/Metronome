@@ -4,16 +4,8 @@ import AudioKit
 import CompilerSwiftAI
 
 extension MetronomeConductor {
-    func execute(function: Function<MetronomeParameters>) {
-        print("🎯 Executing fucntion: \(function)")
-        
-        guard let metronomeFunction = CompilerFunction.from(function) else {
-            print("❌ Failed to parse function: \(function)")
-            return
-        }
-        print("✅ Parsed function: \(metronomeFunction)")
-        
-        switch metronomeFunction {
+    func execute(function: CompilerFunction) {
+        switch function {
         case .play:
             data.isPlaying = true
             

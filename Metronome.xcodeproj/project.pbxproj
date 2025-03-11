@@ -446,7 +446,7 @@
 				INFOPLIST_FILE = Metronome/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Microphone used for prompting the metronome";
-				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "YOu know";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Speech Recognition for transcribing text";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -490,7 +490,7 @@
 				INFOPLIST_FILE = Metronome/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Microphone used for prompting the metronome";
-				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "YOu know";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Speech Recognition for transcribing text";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;

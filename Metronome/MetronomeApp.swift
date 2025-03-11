@@ -3,11 +3,16 @@
 import SwiftUI
 import AuthenticationServices
 import CompilerSwiftAI
+import AVFoundation
 
 @main
 struct MetronomeApp: App {
     @State private var compiler = CompilerManager()
     @State private var currentNonce: String?
+    
+    init() {
+        setupAudioSession()
+    }
 
     var body: some Scene {
         WindowGroup {
@@ -45,6 +50,15 @@ struct MetronomeApp: App {
                     }
                 }
             }
+        }
+    }
+    // Add private function for AVAudioSession setup
+    private func setupAudioSession() {
+        do {
+            try AVAudioSession.sharedInstance().setCategory(.playAndRecord, options: [.mixWithOthers, .defaultToSpeaker])
+            try AVAudioSession.sharedInstance().setActive(true)
+        } catch {
+            print("Error: can't change AVAudioSession: \(error.localizedDescription)")
         }
     }
 }
