@@ -32,6 +32,7 @@ struct BeatsView: View {
                 }
             }
         }
+        .frame(height: 50)
     }
 }
 

@@ -10,6 +10,7 @@ import Transcriber
 
 struct InputSwitcherView: View {
     var viewModel: MetronomeViewModel
+    let lightColor: Color
     @State private var promptText: String = ""
     @State private var selectedTab = 0
     
@@ -22,6 +23,7 @@ struct InputSwitcherView: View {
                     rmsValue: viewModel.transcriber.rmsValue,
                     isProcessing: viewModel.isProcessingPrompt,
                     supportsThinkingState: true,
+                    colors: .init(idle: lightColor, thinking: .gray),
                     onTap: {
                         Task {
                             await viewModel.toggleTranscription()
@@ -80,5 +82,5 @@ struct InputSwitcherView: View {
 }
 
 #Preview {
-    InputSwitcherView(viewModel: .init(compiler: .init()))
+    InputSwitcherView(viewModel: .init(compiler: .init()), lightColor: .red)
 }
