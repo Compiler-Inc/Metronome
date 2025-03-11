@@ -48,6 +48,9 @@ extension MetronomeConductor {
         case let .setNumberOfBeats(function):
             guard let parameters = function.parameters else { return }
             data.timeSignatureTop = parameters.numberOfBeats
+        case .setColor(let function):
+            guard let parameters = function.parameters else { return }
+                #warning("SET THE COLORsk_cgvbnXDKAGXRUVc2y83GzRGtETU4pTTzahlBWayIyc")
         }
         print("Finished executing all functions")
     }

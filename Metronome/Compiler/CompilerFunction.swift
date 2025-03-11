@@ -21,6 +21,7 @@ enum CompilerFunction: Decodable, Sendable {
         case setUpBeat = "setUpBeat"
         case setGapMeasures = "setGapMeasures"
         case setNumberOfBeats = "setNumberOfBeats"
+        case setColor = "setColor"
         case noOp = "noOp"
     }
     
@@ -90,6 +91,14 @@ enum CompilerFunction: Decodable, Sendable {
     }
     case setNumberOfBeats(Function<SetNumberOfBeatsParameters>)
     
+    /// Sets the color or style of the metronome. The available colors are "red", "orange", "yellow", "green", "mint", "teal", "cyan", "blue", "indigo", "purple", "pink", "brown", "black", "white", "gray"'. If the prompt is a color not listed, do your best to match it with a corresponding color. For example "make the style Crimson" should match with "red".
+    /// - Parameters:
+    ///   - color: The color to set
+    struct SetColorParameters: Decodable, Sendable {
+        let color: String
+    }
+    case setColor(Function<SetColorParameters>)
+    
     /// This is returned if the function could not be converted into appropriate functions
     struct NoOpParameters: Decodable, Sendable {}
     case noOp(Function<NoOpParameters>)
@@ -100,59 +109,64 @@ enum CompilerFunction: Decodable, Sendable {
         let colloquialDesc = try container.decodeIfPresent(String.self, forKey: .colloquialDescription) ?? "Processing metronome command"
         
         switch functionType {
-        case .play:
-            self = .play(.init(id: functionType.rawValue, parameters: PlayParameters(), colloquialDescription: colloquialDesc))
-        case .stop:
-            self = .stop(.init(id: functionType.rawValue, parameters: StopParameters(), colloquialDescription: colloquialDesc))
-        case .setTempo:
-            let params = try container.decodeIfPresent(SetTempoParameters.self, forKey: .parameters) ?? nil
-            self = .setTempo(.init(id: functionType.rawValue, parameters: params, colloquialDescription: colloquialDesc))
-        case .rampTempo:
-            let params = try container.decodeIfPresent(RampTempoParameters.self, forKey: .parameters) ?? nil
-            self = .rampTempo(.init(id: functionType.rawValue, parameters: params, colloquialDescription: colloquialDesc))
-        case .changeSound:
-            let params = try container.decodeIfPresent(ChangeSoundParameters.self, forKey: .parameters) ?? nil
-            self = .changeSound(.init(id: functionType.rawValue, parameters: params, colloquialDescription: colloquialDesc))
-        case .setDownBeat:
-            let params = try container.decodeIfPresent(SetDownBeatParameters.self, forKey: .parameters) ?? nil
-            self = .setDownBeat(.init(id: functionType.rawValue, parameters: params, colloquialDescription: colloquialDesc))
-        case .setUpBeat:
-            let params = try container.decodeIfPresent(SetUpBeatParameters.self, forKey: .parameters) ?? nil
-            self = .setUpBeat(.init(id: functionType.rawValue, parameters: params, colloquialDescription: colloquialDesc))
-        case .setGapMeasures:
-            let params = try container.decodeIfPresent(SetGapMeasureParameters.self, forKey: .parameters) ?? nil
-            self = .setGapMeasures(.init(id: functionType.rawValue, parameters: params, colloquialDescription: colloquialDesc))
-        case .setNumberOfBeats:
-            let params = try container.decodeIfPresent(SetNumberOfBeatsParameters.self, forKey: .parameters) ?? nil
-            self = .setNumberOfBeats(.init(id: functionType.rawValue, parameters: params, colloquialDescription: colloquialDesc))
-        case .noOp:
-            let params = try container.decodeIfPresent(NoOpParameters.self, forKey: .parameters) ?? nil
-            self = .noOp(.init(id: functionType.rawValue, parameters: params, colloquialDescription: colloquialDesc))
+            case .play:
+                self = .play(.init(id: functionType.rawValue, parameters: PlayParameters(), colloquialDescription: colloquialDesc))
+            case .stop:
+                self = .stop(.init(id: functionType.rawValue, parameters: StopParameters(), colloquialDescription: colloquialDesc))
+            case .setTempo:
+                let params = try container.decodeIfPresent(SetTempoParameters.self, forKey: .parameters) ?? nil
+                self = .setTempo(.init(id: functionType.rawValue, parameters: params, colloquialDescription: colloquialDesc))
+            case .rampTempo:
+                let params = try container.decodeIfPresent(RampTempoParameters.self, forKey: .parameters) ?? nil
+                self = .rampTempo(.init(id: functionType.rawValue, parameters: params, colloquialDescription: colloquialDesc))
+            case .changeSound:
+                let params = try container.decodeIfPresent(ChangeSoundParameters.self, forKey: .parameters) ?? nil
+                self = .changeSound(.init(id: functionType.rawValue, parameters: params, colloquialDescription: colloquialDesc))
+            case .setDownBeat:
+                let params = try container.decodeIfPresent(SetDownBeatParameters.self, forKey: .parameters) ?? nil
+                self = .setDownBeat(.init(id: functionType.rawValue, parameters: params, colloquialDescription: colloquialDesc))
+            case .setUpBeat:
+                let params = try container.decodeIfPresent(SetUpBeatParameters.self, forKey: .parameters) ?? nil
+                self = .setUpBeat(.init(id: functionType.rawValue, parameters: params, colloquialDescription: colloquialDesc))
+            case .setGapMeasures:
+                let params = try container.decodeIfPresent(SetGapMeasureParameters.self, forKey: .parameters) ?? nil
+                self = .setGapMeasures(.init(id: functionType.rawValue, parameters: params, colloquialDescription: colloquialDesc))
+            case .setNumberOfBeats:
+                let params = try container.decodeIfPresent(SetNumberOfBeatsParameters.self, forKey: .parameters) ?? nil
+                self = .setNumberOfBeats(.init(id: functionType.rawValue, parameters: params, colloquialDescription: colloquialDesc))
+            case .setColor:
+                let params = try container.decodeIfPresent(SetColorParameters.self, forKey: .parameters) ?? nil
+                self = .setColor(.init(id: functionType.rawValue, parameters: params, colloquialDescription: colloquialDesc))
+            case .noOp:
+                let params = try container.decodeIfPresent(NoOpParameters.self, forKey: .parameters) ?? nil
+                self = .noOp(.init(id: functionType.rawValue, parameters: params, colloquialDescription: colloquialDesc))
         }
     }
     
     var colloquialDescription: String {
         switch self {
-        case .play(let function):
-            return function.colloquialDescription
-        case .stop(let function):
-            return function.colloquialDescription
-        case .setTempo(let function):
-            return function.colloquialDescription
-        case .rampTempo(let function):
-            return function.colloquialDescription
-        case .changeSound(let function):
-            return function.colloquialDescription
-        case .setDownBeat(let function):
-            return function.colloquialDescription
-        case .setUpBeat(let function):
-            return function.colloquialDescription
-        case .setGapMeasures(let function):
-            return function.colloquialDescription
-        case .noOp(let function):
-            return function.colloquialDescription
-        case .setNumberOfBeats(let function):
-            return function.colloquialDescription
+            case .play(let function):
+                return function.colloquialDescription
+            case .stop(let function):
+                return function.colloquialDescription
+            case .setTempo(let function):
+                return function.colloquialDescription
+            case .rampTempo(let function):
+                return function.colloquialDescription
+            case .changeSound(let function):
+                return function.colloquialDescription
+            case .setDownBeat(let function):
+                return function.colloquialDescription
+            case .setUpBeat(let function):
+                return function.colloquialDescription
+            case .setGapMeasures(let function):
+                return function.colloquialDescription
+            case .noOp(let function):
+                return function.colloquialDescription
+            case .setNumberOfBeats(let function):
+                return function.colloquialDescription
+            case .setColor(let function):
+                return function.colloquialDescription
         }
     }
 }
