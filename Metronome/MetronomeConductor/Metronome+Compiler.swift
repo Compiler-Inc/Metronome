@@ -45,6 +45,9 @@ extension MetronomeConductor {
             
         case .noOp:
             print("NoOp received")
+        case let .setNumberOfBeats(function):
+            guard let parameters = function.parameters else { return }
+            data.timeSignatureTop = parameters.numberOfBeats
         }
         print("Finished executing all functions")
     }

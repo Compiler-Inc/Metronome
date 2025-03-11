@@ -21,6 +21,7 @@ enum CompilerFunction: Decodable, Sendable {
         case setDownBeat = "setDownBeat"
         case setUpBeat = "setUpBeat"
         case setGapMeasures = "setGapMeasures"
+        case setNumberOfBeats = "setNumberOfBeats"
         case noOp = "noOp"
     }
     
@@ -82,6 +83,14 @@ enum CompilerFunction: Decodable, Sendable {
     }
     case setGapMeasures(Function<SetGapMeasureParameters>)
     
+    /// Sets the number of beats that are shown on the metronome. This is also the top number of a traiditional Time Signature, so the user may say something like "Set the time signature to 7 4" and you will only change the first or top number.
+    /// - Parameters:
+    ///   - numberOfBeats: The number of beats to show, also the top number of a traditional time signature
+    struct SetNumberOfBeatsParameters: Decodable, Sendable {
+        let numberOfBeats: Int
+    }
+    case setNumberOfBeats(Function<SetNumberOfBeatsParameters>)
+    
     /// This is returned if the function could not be converted into appropriate functions
     struct NoOpParameters: Decodable, Sendable {}
     case noOp(Function<NoOpParameters>)
@@ -114,6 +123,9 @@ enum CompilerFunction: Decodable, Sendable {
         case .setGapMeasures:
             let params = try container.decodeIfPresent(SetGapMeasureParameters.self, forKey: .parameters) ?? nil
             self = .setGapMeasures(.init(id: functionType.rawValue, parameters: params, colloquialDescription: colloquialDesc))
+        case .setNumberOfBeats:
+            let params = try container.decodeIfPresent(SetNumberOfBeatsParameters.self, forKey: .parameters) ?? nil
+            self = .setNumberOfBeats(.init(id: functionType.rawValue, parameters: params, colloquialDescription: colloquialDesc))
         case .noOp:
             let params = try container.decodeIfPresent(NoOpParameters.self, forKey: .parameters) ?? nil
             self = .noOp(.init(id: functionType.rawValue, parameters: params, colloquialDescription: colloquialDesc))
@@ -139,6 +151,8 @@ enum CompilerFunction: Decodable, Sendable {
         case .setGapMeasures(let function):
             return function.colloquialDescription
         case .noOp(let function):
+            return function.colloquialDescription
+        case .setNumberOfBeats(let function):
             return function.colloquialDescription
         }
     }
