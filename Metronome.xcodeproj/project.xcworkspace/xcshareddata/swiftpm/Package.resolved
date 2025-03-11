@@ -1,5 +1,5 @@
 {
-  "originHash" : "f5a489607761fff17dccce6f05dec159f63257fdb636c0dd2b069c894f6b47fa",
+  "originHash" : "343bd9ec6c6b32e8eb11f62a71636438a415c08befd889586d41fdc50ae28111",
   "pins" : [
     {
       "identity" : "audiokit",
@@ -26,6 +26,15 @@
       "state" : {
         "revision" : "1a61e8a96c7ee24c3e5abe06dc3334a31fd7571d",
         "version" : "0.3.7"
+      }
+    },
+    {
+      "identity" : "compilerswiftai",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Compiler-Inc/CompilerSwiftAI",
+      "state" : {
+        "revision" : "a9ddfa0f59a11c746c9ef8fbdc1edf7dcd94f289",
+        "version" : "0.0.7"
       }
     },
     {

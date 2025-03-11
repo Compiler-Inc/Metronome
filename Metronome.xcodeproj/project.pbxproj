@@ -31,7 +31,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		EC0AFC672D7FE16D00CD1C82 /* CompilerSwiftAI */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = CompilerSwiftAI; path = ../CompilerSwiftAI; sourceTree = SOURCE_ROOT; };
 		F181A9FB2D093CED006E3941 /* Metronome.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Metronome.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F181AA0E2D093CEF006E3941 /* MetronomeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MetronomeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F181AA182D093CEF006E3941 /* MetronomeUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MetronomeUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -105,7 +104,6 @@
 				F181AA1B2D093CEF006E3941 /* MetronomeUITests */,
 				F181AA2F2D0A4A94006E3941 /* Frameworks */,
 				F181A9FC2D093CED006E3941 /* Products */,
-				EC0AFC672D7FE16D00CD1C82 /* CompilerSwiftAI */,
 			);
 			sourceTree = "<group>";
 		};
@@ -657,8 +655,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Compiler-Inc/CompilerSwiftAI";
 			requirement = {
-				branch = main;
-				kind = branch;
+				kind = exactVersion;
+				version = 0.0.7;
 			};
 		};
 		6B38582A2D7F655C003DFE48 /* XCRemoteSwiftPackageReference "AudioKitUI" */ = {
