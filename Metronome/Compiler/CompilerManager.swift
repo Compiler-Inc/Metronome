@@ -43,12 +43,12 @@ extension CompilerManager {
     /// Process a voice prompt and return the resulting compiler functions
     /// - Parameter prompt: The transcribed text from the voice input
     /// - Returns: An array of parsed CompilerFunction objects
-    func getFunctions(for prompt: String) async throws -> [CompilerFunction] {
+    func getFunctions(for prompt: String, and state: CompilerMetronomeState) async throws -> [CompilerFunction] {
         
         // Process the prompt with the backend service and convert to CompilerFunction enums
         let compilerFunctions: [CompilerFunction] = try await client.processFunction(
             prompt: prompt,
-            for: MetronomeState(bpm: 120)
+            for: state
         )
         
         print("🤖 Received \(compilerFunctions.count) functions from backend")

@@ -3,6 +3,7 @@
 import Foundation
 import SwiftUI
 import Transcriber
+import CompilerSwiftAI
 
 @Observable
 @MainActor
@@ -34,7 +35,7 @@ final class MetronomeViewModel {
         do {
             isProcessingPrompt = true
             defer { isProcessingPrompt = false }
-            let functions = try await compiler.getFunctions(for: text)
+            let functions = try await compiler.getFunctions(for: text, and: metronome.compilerState)
             
             // Clear previous function descriptions
             functionDescriptions.removeAll()
@@ -119,6 +120,19 @@ extension MetronomeViewModel {
             conductor.data.color
         }
         
+        var compilerState: CompilerMetronomeState {
+            get {
+                CompilerMetronomeState(
+                    bpm: tempo,
+                    timeSignatureTop: timeSignatureTop,
+                    isPlaying: isPlaying,
+                    gapMeasureCount: conductor.data.gapMeasureCount,
+                    targetDuration: conductor.data.targetDuration,
+                    targetTempo: conductor.data.targetTempo
+                )
+            }
+        }
+        
         // Methods
         func togglePlayback() {
             conductor.data.isPlaying.toggle()
@@ -136,4 +150,14 @@ extension MetronomeViewModel {
             conductor.stop()
         }
     }
+}
+
+struct CompilerMetronomeState: AppStateProtocol {
+    let bpm: Double
+    let timeSignatureTop: Int
+    let isPlaying: Bool
+    let gapMeasureCount: Int
+    let targetDuration: TimeInterval?
+    let targetTempo: Double?
+    
 }
