@@ -1,9 +1,4 @@
-//
-//  InputSwitcherView.swift
-//  Metronome
-//
-//  Created by Atharva Vaidya on 3/10/25.
-//
+//  Copyright © 2025 Compiler, Inc. All rights reserved.
 
 import SwiftUI
 import Transcriber

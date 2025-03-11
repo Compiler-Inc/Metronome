@@ -1,4 +1,4 @@
-//  Copyright 2025 Compiler, Inc. All rights reserved.
+//  Copyright © 2025 Compiler, Inc. All rights reserved.
 
 import SwiftUI
 import Transcriber
