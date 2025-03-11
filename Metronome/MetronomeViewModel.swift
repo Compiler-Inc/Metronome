@@ -3,6 +3,7 @@
 import Foundation
 import SwiftUI
 import Transcriber
+import CompilerSwiftAI
 
 @Observable
 @MainActor
@@ -27,8 +28,30 @@ final class MetronomeViewModel {
     
     var isTextInputMode: Bool = false
     
+    private let sysetemPrompt: String = """
+You will be given a query asking for the BPM (beats per minute) or tempo of a specific song. Your task is to provide only the song title and its BPM, without any additional explanation or text.
+
+Here is the query:
+<song_query>
+{{SONG_QUERY}}
+</song_query>
+
+Instructions:
+1. Extract the song title and artist (if provided) from the query.
+2. Look up the BPM for the specified song.
+3. Respond with only the song title followed by a colon, then the BPM number, and "BPM".
+4. Do not include any other information, explanations, or text in your response.
+
+Format your response as follows:
+<answer>
+[Song Title]: [BPM number] BPM
+</answer>
+
+Remember: Provide only the song title and BPM. Do not include any additional information or explanations.
+"""
+    
     @MainActor
-    func processPrompt(_ text: String) async {
+    func processFunctionPrompt(_ text: String) async {
         // Skip processing if text is empty
         guard !text.isEmpty else { return }
         do {
@@ -67,6 +90,42 @@ final class MetronomeViewModel {
         }
     }
     
+    @MainActor
+    func processModelPrompt(_ text: String) async {
+        guard !text.isEmpty else { return }
+        
+        do {
+            isProcessingPrompt = true
+            defer { isProcessingPrompt = false }
+            let messages: [Message] = [Message(id: "0", role: .system, content: sysetemPrompt), Message(id: "1", role: .user, content: text)]
+            
+            let completion = try await compiler.client.generateText(request: .init(messages: messages, model: "chatgpt-4o-latest"), using: .openAI(.gpt4o))
+            functionDescriptions.removeAll()
+            
+            let generatedText = completion.choices.first?.message.content ?? ""
+            
+            print("generated text:\(generatedText)")
+            functionDescriptions.append(generatedText)
+            
+            if !functionDescriptions.isEmpty {
+                showFunctionNotification = true
+                
+                // Cancel any existing timer
+                functionNotificationTimer?.invalidate()
+                
+                // Set a timer to hide the notification after 5 seconds
+                functionNotificationTimer = Timer.scheduledTimer(withTimeInterval: 3.5, repeats: false) { [weak self] _ in
+                    Task { @MainActor in
+                        self?.showFunctionNotification = false
+                    }
+                }
+            }
+            
+        } catch {
+            print("Erro processing model prompt: \(error.localizedDescription)")
+        }
+    }
+    
     // Record speech and process the transcription
     @MainActor
     func toggleTranscription() async {
@@ -82,7 +141,7 @@ final class MetronomeViewModel {
         
         // Process the text
         if !transcribedText.isEmpty {
-            await processPrompt(transcribedText)
+            await processFunctionPrompt(transcribedText)
         }
     }
 }
