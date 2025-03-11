@@ -6,42 +6,46 @@ import CompilerSwiftAI
 extension MetronomeConductor {
     func execute(function: CompilerFunction) {
         switch function {
-        case .play(_):
+        case .play:
             data.isPlaying = true
             
-        case .stop(_):
+        case .stop:
             data.isPlaying = false
             
-        case .setTempo(let bpm, _):
-            data.tempo = bpm
+        case .setTempo(let function):
+            guard let params = function.parameters else { return }
+            data.tempo = params.bpm
             
-        case .rampTempo(let bpm, let duration, _):
-            rampTempo(bpm: bpm, duration: duration)
+        case .rampTempo(let function):
+            guard let params = function.parameters else { return }
+            rampTempo(bpm: params.bpm, duration: params.duration)
             
-        case .changeSound(let sound, _):
-            let s = GiantSound.allCases.first(where: {$0.description == sound})
-            if let note = s?.rawValue {
-                self.data.note = MIDINoteNumber(note)
-            }
+        case .changeSound(let function):
+            guard let params = function.parameters,
+                  let sound = GiantSound.allCases.first(where: { $0.description == params.sound })
+            else { return }
+            self.data.note = MIDINoteNumber(sound.rawValue)
             
-        case .setDownBeat(let sound, _):
-            let s = GiantSound.allCases.first(where: {$0.description == sound})
-            if let note = s?.rawValue {
-                data.startingNote = MIDINoteNumber(note)
-            }
+        case .setDownBeat(let function):
+            guard let params = function.parameters,
+                  let sound = GiantSound.allCases.first(where: { $0.description == params.sound })
+            else { return }
             
-        case .setUpBeat(let sound, _):
-            let s = GiantSound.allCases.first(where: {$0.description == sound})
-            if let note = s?.rawValue {
-                data.accentNote = MIDINoteNumber(note)
-            }
+            data.startingNote = MIDINoteNumber(sound.rawValue)
             
-        case .setGapMeasures(let count, _):
-            data.gapMeasureCount = count
+        case .setUpBeat(let function):
+            guard let params = function.parameters,
+                  let sound = GiantSound.allCases.first(where: { $0.description == params.sound })
+            else { return }
+            data.accentNote = MIDINoteNumber(sound.rawValue)
             
-        case .noOp(_):
-            print(" NoOp received")
+        case .setGapMeasures(let function):
+            guard let params = function.parameters else { return }
+            data.gapMeasureCount = params.count
+            
+        case .noOp:
+            print("NoOp received")
         }
-        print(" Finished executing all functions")
+        print("Finished executing all functions")
     }
 }

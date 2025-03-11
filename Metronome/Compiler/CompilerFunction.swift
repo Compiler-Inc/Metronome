@@ -1,159 +1,144 @@
-//  Copyright © 2025 Compiler, Inc. All rights reserved.
+//  Copyright 2025 Compiler, Inc. All rights reserved.
 
 import Foundation
 import CompilerSwiftAI
 
-/// Metronome Parameters for decoding functions
-public struct MetronomeParameters: Decodable, Sendable {
-    public let bpm: Double?
-    public let duration: Double?
-    public let sound: String?
-    public let count: Int?
-}
-
 /// Compiler Function
-enum CompilerFunction: Decodable, Sendable, FunctionCallProtocol {
-    
-    typealias Parameters = MetronomeParameters
-    
-    /// Make the metronome start making sounds
-    case play(response: String)
-    
-    /// Make the metronome no longer play sounds
-    case stop(response: String)
-    
-    /// Set the tempo or speed of the metronome iin "beats per minute (bpm)"
-    /// - Parameters:
-    ///   - bpm: The target tempo in beats per minute, need to be between 20 and 300
-    case setTempo(bpm: Double, response: String)
-    
-    /// Increase or decrease the tempo of the metronome over a specified duration,
-    /// - Parameters:
-    ///   - bpm: The target tempo in beats per minute, need to be between 20 and 300
-    ///   - duration: The length of time in seconds it will take to reach the target tempo
-    case rampTempo(bpm: Double, duration: Double, response: String)
-    
-    /// Change the primary sound of the metronome, which can be referred to as the pulse
-    /// - Parameters:
-    ///   - sound: This sound has to be one of the following: snap, knock, Acoustic Bass Drum, Bass Drum 1, Side Stick, Acoustic Snare, Hand Clap, Electric Snare, Low Floor Tom, Closed Hi Hat, High Floor Tom, Pedal Hi-Hat, Low Tom, Open Hi-Hat, Low-Mid Tom, Hi Mid Tom, Crash Cymbal 1, High Tom, Ride Cymbal 1, Chinese Cymbal, Ride Bell, Tambourine, Splash Cymbal, Cowbell, Crash Cymbal 2, Vibraslap, Ride Cymbal 2, Hi Bongo, Low Bongo, Mute Hi Conga, Open Hi Conga, Low Conga, High Timbale, Low Timbale, High Agogo, Low Agogo, Cabasa, Maracas, Short Guiro, Long Guiro, Claves, Hi Wood Block, Low Wood Block, Mute Triangle, Open Triangle
-    case changeSound(sound: String, response: String)
-    
-    /// Change the downbeat sound of the metronome, which can be referred to as the first beat sound
-    /// - Parameters:
-    ///   - sound: This sound has to be one of the following: snap, knock, Acoustic Bass Drum, Bass Drum 1, Side Stick, Acoustic Snare, Hand Clap, Electric Snare, Low Floor Tom, Closed Hi Hat, High Floor Tom, Pedal Hi-Hat, Low Tom, Open Hi-Hat, Low-Mid Tom, Hi Mid Tom, Crash Cymbal 1, High Tom, Ride Cymbal 1, Chinese Cymbal, Ride Bell, Tambourine, Splash Cymbal, Cowbell, Crash Cymbal 2, Vibraslap, Ride Cymbal 2, Hi Bongo, Low Bongo, Mute Hi Conga, Open Hi Conga, Low Conga, High Timbale, Low Timbale, High Agogo, Low Agogo, Cabasa, Maracas, Short Guiro, Long Guiro, Claves, Hi Wood Block, Low Wood Block, Mute Triangle, Open Triangle
-    case setDownBeat(sound: String, response: String)
-    
-    /// Change the upbeat sound of the metronome, which can be referred to as the accent
-    /// - Parameters:
-    ///   - sound: This sound has to be one of the following: snap, knock, Acoustic Bass Drum, Bass Drum 1, Side Stick, Acoustic Snare, Hand Clap, Electric Snare, Low Floor Tom, Closed Hi Hat, High Floor Tom, Pedal Hi-Hat, Low Tom, Open Hi-Hat, Low-Mid Tom, Hi Mid Tom, Crash Cymbal 1, High Tom, Ride Cymbal 1, Chinese Cymbal, Ride Bell, Tambourine, Splash Cymbal, Cowbell, Crash Cymbal 2, Vibraslap, Ride Cymbal 2, Hi Bongo, Low Bongo, Mute Hi Conga, Open Hi Conga, Low Conga, High Timbale, Low Timbale, High Agogo, Low Agogo, Cabasa, Maracas, Short Guiro, Long Guiro, Claves, Hi Wood Block, Low Wood Block, Mute Triangle, Open Triangle
-    case setUpBeat(sound: String, response: String)
-    
-    /// After every measure of the metronome playing, we can play any number of silent measures
-    /// - Parameters:
-    ///   - count: The number of measures of silence to be played
-    case setGapMeasures(count: Int, response: String)
-    
-    /// This is returned if the function cound not be converted into appropriate functions
-    case noOp(response: String)
-    
+enum CompilerFunction: Decodable, Sendable {
     private enum CodingKeys: String, CodingKey {
         case function
         case parameters
         case colloquialDescription = "colloquial_response"
     }
     
-    // MARK: - FunctionCallProtocol Properties
-    
-    var id: String {
-        switch self {
-        case .play: return "play"
-        case .stop: return "stop"
-        case .setTempo: return "setTempo"
-        case .rampTempo: return "rampTempo"
-        case .changeSound: return "changeSound"
-        case .setDownBeat: return "setDownBeat"
-        case .setUpBeat: return "setUpBeat"
-        case .setGapMeasures: return "setGapMeasures"
-        case .noOp: return "noOp"
-        }
+    private enum FunctionType: String, Decodable {
+        case play
+        case stop
+        case setTempo = "setTempo"
+        case rampTempo = "rampTempo"
+        case changeSound = "changeSound"
+        case setDownBeat = "setDownBeat"
+        case setUpBeat = "setUpBeat"
+        case setGapMeasures = "setGapMeasures"
+        case noOp = "noOp"
     }
     
-    var parameters: MetronomeParameters {
-        switch self {
-        case .play, .stop, .noOp:
-            return MetronomeParameters(bpm: nil, duration: nil, sound: nil, count: nil)
-        case .setTempo(let bpm, _):
-            return MetronomeParameters(bpm: bpm, duration: nil, sound: nil, count: nil)
-        case .rampTempo(let bpm, let duration, _):
-            return MetronomeParameters(bpm: bpm, duration: duration, sound: nil, count: nil)
-        case .changeSound(let sound, _), .setDownBeat(let sound, _), .setUpBeat(let sound, _):
-            return MetronomeParameters(bpm: nil, duration: nil, sound: sound, count: nil)
-        case .setGapMeasures(let count, _):
-            return MetronomeParameters(bpm: nil, duration: nil, sound: nil, count: count)
+    /// Make the metronome start making sounds
+    struct PlayParameters: Decodable, Sendable {}
+    case play(Function<PlayParameters>)
+    
+    /// Make the metronome no longer play sounds
+    struct StopParameters: Decodable, Sendable {}
+    case stop(Function<StopParameters>)
+    
+    /// Set the tempo or speed of the metronome in "beats per minute (bpm)"
+    /// - Parameters:
+    ///   - bpm: The target tempo in beats per minute, need to be between 20 and 300
+    struct SetTempoParameters: Decodable, Sendable {
+        let bpm: Double
+    }
+    case setTempo(Function<SetTempoParameters>)
+    
+    /// Increase or decrease the tempo of the metronome over a specified duration
+    /// - Parameters:
+    ///   - bpm: The target tempo in beats per minute, need to be between 20 and 300
+    ///   - duration: The length of time in seconds it will take to reach the target tempo
+    struct RampTempoParameters: Decodable, Sendable {
+        let bpm: Double
+        let duration: Double
+    }
+    case rampTempo(Function<RampTempoParameters>)
+    
+    /// Change the primary sound of the metronome, which can be referred to as the pulse
+    /// - Parameters:
+    ///   - sound: This sound has to be one of the following: snap, knock, Acoustic Bass Drum, Bass Drum 1, Side Stick, Acoustic Snare, Hand Clap, Electric Snare, Low Floor Tom, Closed Hi Hat, High Floor Tom, Pedal Hi-Hat, Low Tom, Open Hi-Hat, Low-Mid Tom, Hi Mid Tom, Crash Cymbal 1, High Tom, Ride Cymbal 1, Chinese Cymbal, Ride Bell, Tambourine, Splash Cymbal, Cowbell, Crash Cymbal 2, Vibraslap, Ride Cymbal 2, Hi Bongo, Low Bongo, Mute Hi Conga, Open Hi Conga, Low Conga, High Timbale, Low Timbale, High Agogo, Low Agogo, Cabasa, Maracas, Short Guiro, Long Guiro, Claves, Hi Wood Block, Low Wood Block, Mute Triangle, Open Triangle
+    struct ChangeSoundParameters: Decodable, Sendable {
+        let sound: String
+    }
+    case changeSound(Function<ChangeSoundParameters>)
+    
+    /// Change the downbeat sound of the metronome, which can be referred to as the first beat sound
+    /// - Parameters:
+    ///   - sound: This sound has to be one of the following: snap, knock, Acoustic Bass Drum, Bass Drum 1, Side Stick, Acoustic Snare, Hand Clap, Electric Snare, Low Floor Tom, Closed Hi Hat, High Floor Tom, Pedal Hi-Hat, Low Tom, Open Hi-Hat, Low-Mid Tom, Hi Mid Tom, Crash Cymbal 1, High Tom, Ride Cymbal 1, Chinese Cymbal, Ride Bell, Tambourine, Splash Cymbal, Cowbell, Crash Cymbal 2, Vibraslap, Ride Cymbal 2, Hi Bongo, Low Bongo, Mute Hi Conga, Open Hi Conga, Low Conga, High Timbale, Low Timbale, High Agogo, Low Agogo, Cabasa, Maracas, Short Guiro, Long Guiro, Claves, Hi Wood Block, Low Wood Block, Mute Triangle, Open Triangle
+    struct SetDownBeatParameters: Decodable, Sendable {
+        let sound: String
+    }
+    case setDownBeat(Function<SetDownBeatParameters>)
+    
+    /// Change the upbeat sound of the metronome, which can be referred to as the accent
+    /// - Parameters:
+    ///   - sound: This sound has to be one of the following: snap, knock, Acoustic Bass Drum, Bass Drum 1, Side Stick, Acoustic Snare, Hand Clap, Electric Snare, Low Floor Tom, Closed Hi Hat, High Floor Tom, Pedal Hi-Hat, Low Tom, Open Hi-Hat, Low-Mid Tom, Hi Mid Tom, Crash Cymbal 1, High Tom, Ride Cymbal 1, Chinese Cymbal, Ride Bell, Tambourine, Splash Cymbal, Cowbell, Crash Cymbal 2, Vibraslap, Ride Cymbal 2, Hi Bongo, Low Bongo, Mute Hi Conga, Open Hi Conga, Low Conga, High Timbale, Low Timbale, High Agogo, Low Agogo, Cabasa, Maracas, Short Guiro, Long Guiro, Claves, Hi Wood Block, Low Wood Block, Mute Triangle, Open Triangle
+    struct SetUpBeatParameters: Decodable, Sendable {
+        let sound: String
+    }
+    case setUpBeat(Function<SetUpBeatParameters>)
+    
+    /// After every measure of the metronome playing, we can play any number of silent measures
+    /// - Parameters:
+    ///   - count: The number of measures of silence to be played
+    struct SetGapMeasureParameters: Decodable, Sendable {
+        let count: Int
+    }
+    case setGapMeasures(Function<SetGapMeasureParameters>)
+    
+    /// This is returned if the function could not be converted into appropriate functions
+    struct NoOpParameters: Decodable, Sendable {}
+    case noOp(Function<NoOpParameters>)
+    
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let functionType = try container.decode(FunctionType.self, forKey: .function)
+        let colloquialDesc = try container.decodeIfPresent(String.self, forKey: .colloquialDescription) ?? "Processing metronome command"
+        
+        switch functionType {
+        case .play:
+            self = .play(.init(id: functionType.rawValue, parameters: PlayParameters(), colloquialDescription: colloquialDesc))
+        case .stop:
+            self = .stop(.init(id: functionType.rawValue, parameters: StopParameters(), colloquialDescription: colloquialDesc))
+        case .setTempo:
+            let params = try container.decodeIfPresent(SetTempoParameters.self, forKey: .parameters) ?? nil
+            self = .setTempo(.init(id: functionType.rawValue, parameters: params, colloquialDescription: colloquialDesc))
+        case .rampTempo:
+            let params = try container.decodeIfPresent(RampTempoParameters.self, forKey: .parameters) ?? nil
+            self = .rampTempo(.init(id: functionType.rawValue, parameters: params, colloquialDescription: colloquialDesc))
+        case .changeSound:
+            let params = try container.decodeIfPresent(ChangeSoundParameters.self, forKey: .parameters) ?? nil
+            self = .changeSound(.init(id: functionType.rawValue, parameters: params, colloquialDescription: colloquialDesc))
+        case .setDownBeat:
+            let params = try container.decodeIfPresent(SetDownBeatParameters.self, forKey: .parameters) ?? nil
+            self = .setDownBeat(.init(id: functionType.rawValue, parameters: params, colloquialDescription: colloquialDesc))
+        case .setUpBeat:
+            let params = try container.decodeIfPresent(SetUpBeatParameters.self, forKey: .parameters) ?? nil
+            self = .setUpBeat(.init(id: functionType.rawValue, parameters: params, colloquialDescription: colloquialDesc))
+        case .setGapMeasures:
+            let params = try container.decodeIfPresent(SetGapMeasureParameters.self, forKey: .parameters) ?? nil
+            self = .setGapMeasures(.init(id: functionType.rawValue, parameters: params, colloquialDescription: colloquialDesc))
+        case .noOp:
+            let params = try container.decodeIfPresent(NoOpParameters.self, forKey: .parameters) ?? nil
+            self = .noOp(.init(id: functionType.rawValue, parameters: params, colloquialDescription: colloquialDesc))
         }
     }
     
     var colloquialDescription: String {
         switch self {
-        case .play(let desc),
-             .stop(let desc),
-             .setTempo(_, let desc),
-             .rampTempo(_, _, let desc),
-             .changeSound(_, let desc),
-             .setDownBeat(_, let desc),
-             .setUpBeat(_, let desc),
-             .setGapMeasures(_, let desc),
-             .noOp(let desc):
-            return desc
-        }
-    }
-    
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        let functionName = try container.decode(String.self, forKey: .function)
-        let parameters = try? container.decodeIfPresent(MetronomeParameters.self, forKey: .parameters)
-        let colloquialDesc = try container.decodeIfPresent(String.self, forKey: .colloquialDescription) ?? "Processing metronome command"
-        
-        switch functionName {
-        case "play":
-            self = .play(response: colloquialDesc)
-        case "stop":
-            self = .stop(response: colloquialDesc)
-        case "setTempo":
-            guard let bpm = parameters?.bpm else {
-                throw DecodingError.dataCorruptedError(forKey: .parameters, in: container, debugDescription: "Missing bpm parameter")
-            }
-            self = .setTempo(bpm: bpm, response: colloquialDesc)
-        case "rampTempo":
-            guard let bpm = parameters?.bpm else {
-                throw DecodingError.dataCorruptedError(forKey: .parameters, in: container, debugDescription: "Missing bpm parameter")
-            }
-            guard let duration = parameters?.duration else {
-                throw DecodingError.dataCorruptedError(forKey: .parameters, in: container, debugDescription: "Missing duration parameter")
-            }
-            self = .rampTempo(bpm: bpm, duration: duration, response: colloquialDesc)
-        case "changeSound":
-            guard let sound = parameters?.sound else {
-                throw DecodingError.dataCorruptedError(forKey: .parameters, in: container, debugDescription: "Missing sound parameter")
-            }
-            self = .changeSound(sound: sound, response: colloquialDesc)
-        case "setDownBeat":
-            guard let sound = parameters?.sound else {
-                throw DecodingError.dataCorruptedError(forKey: .parameters, in: container, debugDescription: "Missing sound parameter")
-            }
-            self = .setDownBeat(sound: sound, response: colloquialDesc)
-        case "setUpBeat":
-            guard let sound = parameters?.sound else {
-                throw DecodingError.dataCorruptedError(forKey: .parameters, in: container, debugDescription: "Missing sound parameter")
-            }
-            self = .setUpBeat(sound: sound, response: colloquialDesc)
-        case "setGapMeasures":
-            guard let count = parameters?.count else {
-                throw DecodingError.dataCorruptedError(forKey: .parameters, in: container, debugDescription: "Missing count parameter")
-            }
-            self = .setGapMeasures(count: count, response: colloquialDesc)
-        default:
-            self = .noOp(response: colloquialDesc)
+        case .play(let function):
+            return function.colloquialDescription
+        case .stop(let function):
+            return function.colloquialDescription
+        case .setTempo(let function):
+            return function.colloquialDescription
+        case .rampTempo(let function):
+            return function.colloquialDescription
+        case .changeSound(let function):
+            return function.colloquialDescription
+        case .setDownBeat(let function):
+            return function.colloquialDescription
+        case .setUpBeat(let function):
+            return function.colloquialDescription
+        case .setGapMeasures(let function):
+            return function.colloquialDescription
+        case .noOp(let function):
+            return function.colloquialDescription
         }
     }
 }
