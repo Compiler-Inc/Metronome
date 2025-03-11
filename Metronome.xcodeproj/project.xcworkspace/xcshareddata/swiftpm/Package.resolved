@@ -1,5 +1,5 @@
 {
-  "originHash" : "97775a0dcae0ff3da09db48de729a08d65f9fa4c70f36d5c7cff37ac3b792f53",
+  "originHash" : "f5a489607761fff17dccce6f05dec159f63257fdb636c0dd2b069c894f6b47fa",
   "pins" : [
     {
       "identity" : "audiokit",
@@ -20,6 +20,24 @@
       }
     },
     {
+      "identity" : "audiokitui",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/AudioKit/AudioKitUI",
+      "state" : {
+        "revision" : "1a61e8a96c7ee24c3e5abe06dc3334a31fd7571d",
+        "version" : "0.3.7"
+      }
+    },
+    {
+      "identity" : "controls",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/AudioKit/Controls.git",
+      "state" : {
+        "revision" : "4dd10370125af7f1e26d7a71b2c5929bb3c95087",
+        "version" : "1.1.4"
+      }
+    },
+    {
       "identity" : "kissfft",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/AudioKit/KissFFT",
@@ -29,12 +47,57 @@
       }
     },
     {
+      "identity" : "networkimage",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/gonzalezreal/NetworkImage",
+      "state" : {
+        "revision" : "2849f5323265386e200484b0d0f896e73c3411b9",
+        "version" : "6.0.1"
+      }
+    },
+    {
       "identity" : "soundpipeaudiokit",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/AudioKit/SoundpipeAudioKit.git",
       "state" : {
         "revision" : "ee7d9542078ae48b24744a67c0350a12f9de354b",
         "version" : "5.6.1"
+      }
+    },
+    {
+      "identity" : "stkaudiokit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/AudioKit/STKAudioKit",
+      "state" : {
+        "revision" : "e6af9e24eb599d4ff34d5776b0801cf0068142bc",
+        "version" : "5.5.4"
+      }
+    },
+    {
+      "identity" : "swift-cmark",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/swiftlang/swift-cmark",
+      "state" : {
+        "revision" : "3ccff77b2dc5b96b77db3da0d68d28068593fa53",
+        "version" : "0.5.0"
+      }
+    },
+    {
+      "identity" : "swift-markdown-ui",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/gonzalezreal/swift-markdown-ui",
+      "state" : {
+        "revision" : "5f613358148239d0292c0cef674a3c2314737f9e",
+        "version" : "2.4.1"
+      }
+    },
+    {
+      "identity" : "transcriber",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Compiler-Inc/Transcriber",
+      "state" : {
+        "revision" : "37e25987bb85f5edb6a77b8378fc2dac18124e99",
+        "version" : "0.1.8"
       }
     }
   ],

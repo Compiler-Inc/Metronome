@@ -1,50 +1,79 @@
 //  Copyright © 2025 Compiler, Inc. All rights reserved.
 
 import SwiftUI
+import Transcriber
 
 struct MetronomeView: View {
+    @State private var viewModel: MetronomeViewModel
+        
+    init(compiler: CompilerManager) {
+        _viewModel = State(initialValue: MetronomeViewModel(compiler: compiler))
+    }
     
-    var metronome: Metronome
-    
+    var inputView: some View {
+        InputSwitcherView(viewModel: viewModel, lightColor: viewModel.metronome.color)
+    }
+
     var body: some View {
         ZStack {
-            
-            Rectangle()
-                .fill(.clear)
-            
-            Form {
-                
-                LabeledContent("Tempo") {
-                    Text("\(Int(metronome.tempo))")
-                        .font(.system(size: 48, weight: .bold, design: .rounded))
-                        .monospacedDigit()
-                        .frame(width: 100)
-                }
-                
-                LabeledContent("Target Tempo", value: "\(metronome.targetTempo ?? metronome.tempo)")
-                
-                LabeledContent("Duration", value: "\(metronome.targetDuration ?? 0)")
-                
-                LabeledContent("Pulse", value: "\(GiantSound(rawValue: Int(metronome.note)) ?? .snap)")
-                LabeledContent("Downbeat", value: "\(GiantSound(rawValue: Int(metronome.startingNote ?? 0)) ?? .none)")
-                LabeledContent("Upbeat", value: "\(GiantSound(rawValue: Int(metronome.accentNote ?? 0)) ?? .none)")
-                    .monospacedDigit()
-                LabeledContent("Gap Measures", value: "\(metronome.gapMeasureCount)")
-                Button(action: {
-                    metronome.isPlaying.toggle()
-                }) {
-                    Image(systemName: metronome.isPlaying ? "stop" : "play")
-                        .resizable()
-                        .frame(width: 42, height: 42)
-                        .foregroundColor(metronome.isPlaying ? .red : .green)
+            if viewModel.showFunctionNotification && !viewModel.functionDescriptions.isEmpty {
+                VStack {
+                    Spacer()
+                    
+                    FunctionNotificationView(descriptions: viewModel.functionDescriptions)
+                        .animation(.spring(), value: viewModel.showFunctionNotification)
+                    
+                    // Replace the SpeechButton with the InputSwitcherView
+                    inputView
+                        .opacity(0)
                 }
             }
+            VStack {
+                HStack {
+                    Spacer()
+                    
+                    // Play/Stop button
+                    Button(action: {
+                        viewModel.metronome.togglePlayback()
+                    }) {
+                        Image(systemName: viewModel.metronome.isPlaying ? "stop.fill" : "play.fill")
+                            .foregroundColor(viewModel.metronome.color.opacity(0.8))
+                    }
+                    .padding(.trailing, 8)
+                    
+                    Text("\(Int(viewModel.metronome.tempo))")
+                        .font(.system(size: 38))
+                        .fontWeight(.light)
+                        .opacity(0.4)
+                }
+                
+                Spacer()
+                
+                // Beat indicators/lights
+                BeatsView(
+                    lightColor: viewModel.metronome.color,
+                    timeSignatureTop: viewModel.metronome.timeSignatureTop,
+                    currentBeat: viewModel.metronome.currentBeat
+                )
+                
+                Spacer()
+                
+                inputView
+            }
+        }
+        .padding()
+        .onAppear {
+            viewModel.metronome.start()
+            Task {
+                try await viewModel.transcriber.requestAuthorization()
+            }
+        }
+        .onDisappear {
+            viewModel.metronome.stop()
         }
     }
 }
 
-#Preview {
-    MetronomeView(metronome: Metronome())
-        .buttonStyle(.borderless)
-        .padding()
+#Preview("Metronome View") {
+    MetronomeView(compiler: CompilerManager())
 }

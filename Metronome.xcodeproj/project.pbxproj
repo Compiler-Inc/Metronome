@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		290B2CEB2D2A03D300F52581 /* CompilerSwiftAI in Frameworks */ = {isa = PBXBuildFile; productRef = 290B2CEA2D2A03D300F52581 /* CompilerSwiftAI */; };
+		6B38582C2D7F655C003DFE48 /* AudioKitUI in Frameworks */ = {isa = PBXBuildFile; productRef = 6B38582B2D7F655C003DFE48 /* AudioKitUI */; };
+		6B38582F2D7F6598003DFE48 /* STKAudioKit in Frameworks */ = {isa = PBXBuildFile; productRef = 6B38582E2D7F6598003DFE48 /* STKAudioKit */; };
 		F181AA312D0A4A94006E3941 /* SoundpipeAudioKit in Frameworks */ = {isa = PBXBuildFile; productRef = F181AA302D0A4A94006E3941 /* SoundpipeAudioKit */; };
 /* End PBXBuildFile section */
 
@@ -29,7 +31,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		C42330622D31EDC200DD455C /* CompilerSwiftAI */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = CompilerSwiftAI; path = ../CompilerSwiftAI; sourceTree = SOURCE_ROOT; };
+		EC0AFC672D7FE16D00CD1C82 /* CompilerSwiftAI */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = CompilerSwiftAI; path = ../CompilerSwiftAI; sourceTree = SOURCE_ROOT; };
 		F181A9FB2D093CED006E3941 /* Metronome.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Metronome.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F181AA0E2D093CEF006E3941 /* MetronomeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MetronomeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F181AA182D093CEF006E3941 /* MetronomeUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MetronomeUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -72,7 +74,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				F181AA312D0A4A94006E3941 /* SoundpipeAudioKit in Frameworks */,
+				6B38582C2D7F655C003DFE48 /* AudioKitUI in Frameworks */,
 				290B2CEB2D2A03D300F52581 /* CompilerSwiftAI in Frameworks */,
+				6B38582F2D7F6598003DFE48 /* STKAudioKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -96,12 +100,12 @@
 		F181A9F22D093CED006E3941 = {
 			isa = PBXGroup;
 			children = (
-				C42330622D31EDC200DD455C /* CompilerSwiftAI */,
 				F181A9FD2D093CED006E3941 /* Metronome */,
 				F181AA112D093CEF006E3941 /* MetronomeTests */,
 				F181AA1B2D093CEF006E3941 /* MetronomeUITests */,
 				F181AA2F2D0A4A94006E3941 /* Frameworks */,
 				F181A9FC2D093CED006E3941 /* Products */,
+				EC0AFC672D7FE16D00CD1C82 /* CompilerSwiftAI */,
 			);
 			sourceTree = "<group>";
 		};
@@ -144,6 +148,8 @@
 			packageProductDependencies = (
 				F181AA302D0A4A94006E3941 /* SoundpipeAudioKit */,
 				290B2CEA2D2A03D300F52581 /* CompilerSwiftAI */,
+				6B38582B2D7F655C003DFE48 /* AudioKitUI */,
+				6B38582E2D7F6598003DFE48 /* STKAudioKit */,
 			);
 			productName = Metronome;
 			productReference = F181A9FB2D093CED006E3941 /* Metronome.app */;
@@ -230,6 +236,8 @@
 			packageReferences = (
 				F181AA2E2D093D72006E3941 /* XCRemoteSwiftPackageReference "SoundpipeAudioKit" */,
 				290B2CE92D2A03D300F52581 /* XCRemoteSwiftPackageReference "CompilerSwiftAI" */,
+				6B38582A2D7F655C003DFE48 /* XCRemoteSwiftPackageReference "AudioKitUI" */,
+				6B38582D2D7F6598003DFE48 /* XCRemoteSwiftPackageReference "STKAudioKit" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = F181A9FC2D093CED006E3941 /* Products */;
@@ -438,7 +446,7 @@
 				INFOPLIST_FILE = Metronome/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Microphone used for prompting the metronome";
-				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "YOu know";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Speech Recognition for transcribing text";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -482,7 +490,7 @@
 				INFOPLIST_FILE = Metronome/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Microphone used for prompting the metronome";
-				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "YOu know";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Speech Recognition for transcribing text";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -653,6 +661,22 @@
 				kind = branch;
 			};
 		};
+		6B38582A2D7F655C003DFE48 /* XCRemoteSwiftPackageReference "AudioKitUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/AudioKit/AudioKitUI";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.3.7;
+			};
+		};
+		6B38582D2D7F6598003DFE48 /* XCRemoteSwiftPackageReference "STKAudioKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/AudioKit/STKAudioKit";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.5.4;
+			};
+		};
 		F181AA2E2D093D72006E3941 /* XCRemoteSwiftPackageReference "SoundpipeAudioKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/AudioKit/SoundpipeAudioKit.git";
@@ -668,6 +692,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 290B2CE92D2A03D300F52581 /* XCRemoteSwiftPackageReference "CompilerSwiftAI" */;
 			productName = CompilerSwiftAI;
+		};
+		6B38582B2D7F655C003DFE48 /* AudioKitUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6B38582A2D7F655C003DFE48 /* XCRemoteSwiftPackageReference "AudioKitUI" */;
+			productName = AudioKitUI;
+		};
+		6B38582E2D7F6598003DFE48 /* STKAudioKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6B38582D2D7F6598003DFE48 /* XCRemoteSwiftPackageReference "STKAudioKit" */;
+			productName = STKAudioKit;
 		};
 		F181AA302D0A4A94006E3941 /* SoundpipeAudioKit */ = {
 			isa = XCSwiftPackageProductDependency;
