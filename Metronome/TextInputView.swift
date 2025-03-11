@@ -6,6 +6,7 @@ struct TextInputView: View {
     @Binding var promptText: String
     var onSend: () -> Void
     var isProcessing: Bool
+    @FocusState private var isFocused: Bool
     
     var body: some View {
         HStack {
@@ -13,8 +14,12 @@ struct TextInputView: View {
                 .padding(12)
                 .background(Color.gray.opacity(0.1))
                 .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+                .focused($isFocused)
             
-            Button(action: onSend) {
+            Button(action: {
+                isFocused = false
+                onSend()
+            }) {
                 if isProcessing {
                     // Show progress spinner when processing
                     ProgressView()

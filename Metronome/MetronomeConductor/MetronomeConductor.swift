@@ -5,6 +5,7 @@ import AudioKit
 import AudioKitEX
 import AudioKitUI
 import STKAudioKit
+import SwiftUI
 
 struct MetronomeData {
     var note: MIDINoteNumber = MIDINoteNumber(GiantSound.closedHiHat.rawValue)
@@ -20,6 +21,7 @@ struct MetronomeData {
     var timeSignatureTop: Int = 4
     var beatNoteVelocity = 100.0
     var currentBeat = 0
+    var color: Color = .red
 }
 
 @Observable

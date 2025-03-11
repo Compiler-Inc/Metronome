@@ -1,6 +1,7 @@
 //  Copyright 2025 Compiler, Inc. All rights reserved.
 
 import AudioKit
+import SwiftUI
 import CompilerSwiftAI
 
 extension MetronomeConductor {
@@ -50,8 +51,29 @@ extension MetronomeConductor {
             data.timeSignatureTop = parameters.numberOfBeats
         case .setColor(let function):
             guard let parameters = function.parameters else { return }
-                #warning("SET THE COLORsk_cgvbnXDKAGXRUVc2y83GzRGtETU4pTTzahlBWayIyc")
+            data.color = colorFromString(parameters.color)
         }
         print("Finished executing all functions")
+    }
+    
+    private func colorFromString(_ colorName: String) -> Color {
+        switch colorName.lowercased() {
+        case "red": return .red
+        case "orange": return .orange
+        case "yellow": return .yellow
+        case "green": return .green
+        case "mint": return .mint
+        case "teal": return .teal
+        case "cyan": return .cyan
+        case "blue": return .blue
+        case "indigo": return .indigo
+        case "purple": return .purple
+        case "pink": return .pink
+        case "brown": return .brown
+        case "black": return .black
+        case "white": return .white
+        case "gray": return .gray
+        default: return .red
+        }
     }
 }
