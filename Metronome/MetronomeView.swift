@@ -22,6 +22,9 @@ final class MetronomeViewModel {
     public var isProcessingPrompt: Bool = false
     
     var isTextInputMode: Bool = false
+    var functionDescriptions: [String] = []
+    var showFunctionNotification: Bool = false
+    var functionNotificationTimer: Timer?
     
     @Observable
     class MetronomeState {
@@ -78,8 +81,30 @@ final class MetronomeViewModel {
             defer { isProcessingPrompt = false }
             let functions = try await compiler.getFunctions(for: text)
             
+            // Clear previous function descriptions
+            functionDescriptions.removeAll()
+            
+            // Collect descriptions from all functions
             for function in functions {
                 conductor.execute(function: function)
+                
+                // Add the function's colloquial description
+                functionDescriptions.append(function.colloquialDescription)
+            }
+            
+            // Show notification if we have any function descriptions
+            if !functionDescriptions.isEmpty {
+                showFunctionNotification = true
+                
+                // Cancel any existing timer
+                functionNotificationTimer?.invalidate()
+                
+                // Set a timer to hide the notification after 5 seconds
+                functionNotificationTimer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: false) { [weak self] _ in
+                    Task { @MainActor in
+                        self?.showFunctionNotification = false
+                    }
+                }
             }
         } catch {
             // Handle any errors
@@ -104,6 +129,34 @@ final class MetronomeViewModel {
         if !transcribedText.isEmpty {
             await processPrompt(transcribedText)
         }
+    }
+}
+
+struct FunctionNotificationView: View {
+    let descriptions: [String]
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            ForEach(descriptions, id: \.self) { description in
+                Text(description)
+                    .font(.system(size: 14, weight: .medium))
+                    // No foreground color so it adapts automatically to the material
+                    .padding(.vertical, 2)
+            }
+        }
+        .padding(.vertical, 12)
+        .padding(.horizontal, 16)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(.ultraThinMaterial)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(Color.gray.opacity(0.2), lineWidth: 0.5)
+        )
+        .padding(.horizontal)
+        .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 2)
+        .transition(.move(edge: .top).combined(with: .opacity))
     }
 }
 
@@ -150,77 +203,99 @@ struct InputSwitcherView: View {
     @State private var selectedTab = 0
     
     var body: some View {
-        ZStack(alignment: .bottom) {
-            // Use TabView with built-in swipe functionality
-            TabView(selection: $selectedTab) {
-                // Speech button view
-                ZStack {
-                    SpeechButton(
-                        isRecording: viewModel.transcriber.isRecording,
-                        rmsValue: viewModel.transcriber.rmsValue,
-                        isProcessing: viewModel.isProcessingPrompt,
-                        supportsThinkingState: true,
-                        onTap: {
-                            Task {
-                                await viewModel.toggleTranscription()
-                            }
-                        }
-                    )
-                    // Center the speech button and add enough padding
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
-                    .padding(.bottom, 25)
-                }
-                .tag(0)
-                
-                // Text input view - pass isProcessingPrompt to handle thinking state
-                TextInputView(
-                    promptText: $promptText,
-                    onSend: {
-                        Task {
-                            await viewModel.processPrompt(promptText)
-                            promptText = ""
-                        }
-                    },
-                    isProcessing: viewModel.isProcessingPrompt
-                )
-                .padding(.bottom, 25)
-                .tag(1)
+        ZStack(alignment: .top) { // Change alignment to .top for the notification
+            // Function notification appears at the top
+            if viewModel.showFunctionNotification && !viewModel.functionDescriptions.isEmpty {
+                FunctionNotificationView(descriptions: viewModel.functionDescriptions)
+                    .animation(.spring(), value: viewModel.showFunctionNotification)
+                    .zIndex(1) // Make sure it appears above other content
             }
-            .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
             
-            // Navigation hint label with improved positioning
-            HStack {
-                if selectedTab == 1 {
-                    // Show "← Swipe for Voice" when on text input
-                    HStack(spacing: 3) {
-                        Image(systemName: "chevron.left")
-                            .font(.system(size: 9))
-                        Text("Swipe for Voice")
-                            .font(.system(size: 10))
+            ZStack(alignment: .bottom) { // This ZStack contains the tab view and navigation hints
+                // Use TabView with built-in swipe functionality
+                TabView(selection: $selectedTab) {
+                    // Speech button view
+                    ZStack {
+                        VStack(spacing: 10) {
+                            // Show real-time transcription when recording
+                            if viewModel.transcriber.isRecording {
+                                Text(viewModel.transcriber.transcribedText)
+                                    .font(.system(size: 14))
+                                    .foregroundColor(.secondary)
+                                    .padding(.horizontal)
+                                    .padding(.bottom, 5)
+                                    .multilineTextAlignment(.center)
+                                    .frame(maxWidth: .infinity)
+                                    .animation(.easeInOut, value: viewModel.transcriber.transcribedText)
+                            }
+                            
+                            SpeechButton(
+                                isRecording: viewModel.transcriber.isRecording,
+                                rmsValue: viewModel.transcriber.rmsValue,
+                                isProcessing: viewModel.isProcessingPrompt,
+                                supportsThinkingState: true,
+                                onTap: {
+                                    Task {
+                                        await viewModel.toggleTranscription()
+                                    }
+                                }
+                            )
+                        }
+                        // Center the speech button and add enough padding
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+                        .padding(.bottom, 25)
                     }
-                    .foregroundColor(.secondary)
-                    .padding(.leading, 10)
-                    .padding(.bottom, 5)
+                    .tag(0)
+                    
+                    // Text input view - pass isProcessingPrompt to handle thinking state
+                    TextInputView(
+                        promptText: $promptText,
+                        onSend: {
+                            Task {
+                                await viewModel.processPrompt(promptText)
+                                promptText = ""
+                            }
+                        },
+                        isProcessing: viewModel.isProcessingPrompt
+                    )
+                    .padding(.bottom, 25)
+                    .tag(1)
                 }
+                .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
                 
-                Spacer()
-                
-                if selectedTab == 0 {
-                    // Show "Swipe for Type →" when on speech button
-                    HStack(spacing: 3) {
-                        Text("Swipe for Type")
-                            .font(.system(size: 10))
-                        Image(systemName: "chevron.right")
-                            .font(.system(size: 9))
+                // Navigation hint label with improved positioning
+                HStack {
+                    if selectedTab == 1 {
+                        // Show "← Swipe for Voice" when on text input
+                        HStack(spacing: 3) {
+                            Image(systemName: "chevron.left")
+                                .font(.system(size: 9))
+                            Text("Swipe for Voice")
+                                .font(.system(size: 10))
+                        }
+                        .foregroundColor(.secondary)
+                        .padding(.leading, 10)
+                        .padding(.bottom, 5)
                     }
-                    .foregroundColor(.secondary)
-                    .padding(.trailing, 10)
-                    .padding(.bottom, 5)
+                    
+                    Spacer()
+                    
+                    if selectedTab == 0 {
+                        // Show "Swipe for Type →" when on speech button
+                        HStack(spacing: 3) {
+                            Text("Swipe for Type")
+                                .font(.system(size: 10))
+                            Image(systemName: "chevron.right")
+                                .font(.system(size: 9))
+                        }
+                        .foregroundColor(.secondary)
+                        .padding(.trailing, 10)
+                        .padding(.bottom, 5)
+                    }
                 }
             }
+            .frame(height: 100) // Maintain increased height for components
         }
-        // Maintain increased height for components
-        .frame(height: 100)
         .onChange(of: selectedTab) { _, newValue in
             viewModel.isTextInputMode = newValue == 1
         }
@@ -299,4 +374,36 @@ struct MetronomeView: View {
 
 #Preview("Metronome View") {
     MetronomeView(compiler: CompilerManager())
+}
+
+#Preview("Function Notification") {
+    VStack(spacing: 20) {
+        // Single function notification
+        FunctionNotificationView(descriptions: [
+            "Changed tempo to 120 BPM"
+        ])
+        
+        // Multiple function notifications
+        FunctionNotificationView(descriptions: [
+            "Started the metronome",
+            "Changed tempo to 100 BPM",
+            "Changed sound to Bass Drum"
+        ])
+    }
+    .padding()
+    .background(Color.gray.opacity(0.2))
+}
+
+#Preview("Metronome View with Notification") {
+    ZStack(alignment: .top) {
+        MetronomeView(compiler: CompilerManager())
+        
+        // Show a mock notification on top
+        FunctionNotificationView(descriptions: [
+            "Started the metronome",
+            "Changed tempo to 100 BPM"
+        ])// Position it where it would normally appear
+        .padding(.top, 600)
+        .zIndex(1)
+    }
 }
