@@ -21,6 +21,8 @@ final class MetronomeViewModel {
     
     public var isProcessingPrompt: Bool = false
     
+    var isTextInputMode: Bool = false
+    
     @Observable
     class MetronomeState {
         private var conductor: MetronomeConductor
@@ -72,6 +74,8 @@ final class MetronomeViewModel {
         guard !text.isEmpty else { return }
 
         do {
+            isProcessingPrompt = true
+            defer { isProcessingPrompt = false }
             let functions = try await compiler.getFunctions(for: text)
             
             for function in functions {
@@ -93,14 +97,132 @@ final class MetronomeViewModel {
         }
         
         // Otherwise, start a new recording session and process the result
-        isProcessingPrompt = true
-        defer { isProcessingPrompt = false }
         
         let transcribedText = await transcriber.recordAndTranscribe()
         
         // Process the text
         if !transcribedText.isEmpty {
             await processPrompt(transcribedText)
+        }
+    }
+}
+
+struct TextInputView: View {
+    @Binding var promptText: String
+    var onSend: () -> Void
+    var isProcessing: Bool
+    
+    var body: some View {
+        HStack(spacing: 10) {
+            TextField("Send Prompt", text: $promptText)
+                .padding(10)
+                .background(Color.gray.opacity(0.1))
+                .cornerRadius(20)
+            
+            Button(action: onSend) {
+                if isProcessing {
+                    // Show progress spinner when processing
+                    ProgressView()
+                        .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                        .scaleEffect(1.0)
+                } else {
+                    // Show send icon when not processing
+                    Image(systemName: "paperplane.fill")
+                        .font(.system(size: 20))
+                }
+            }
+            // Match the height of the text field and set button colors
+            .frame(width: 40, height: 40)
+            .background(isProcessing ? Color.green : Color.blue)
+            .clipShape(Circle())
+            .foregroundColor(.white)
+            // Disable button when processing or text is empty
+            .disabled(isProcessing || promptText.isEmpty)
+        }
+        .padding(.horizontal)
+        .padding(.bottom, 25) // Maintain bottom padding
+    }
+}
+
+struct InputSwitcherView: View {
+    var viewModel: MetronomeViewModel
+    @State private var promptText: String = ""
+    @State private var selectedTab = 0
+    
+    var body: some View {
+        ZStack(alignment: .bottom) {
+            // Use TabView with built-in swipe functionality
+            TabView(selection: $selectedTab) {
+                // Speech button view
+                ZStack {
+                    SpeechButton(
+                        isRecording: viewModel.transcriber.isRecording,
+                        rmsValue: viewModel.transcriber.rmsValue,
+                        isProcessing: viewModel.isProcessingPrompt,
+                        supportsThinkingState: true,
+                        onTap: {
+                            Task {
+                                await viewModel.toggleTranscription()
+                            }
+                        }
+                    )
+                    // Center the speech button and add enough padding
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+                    .padding(.bottom, 25)
+                }
+                .tag(0)
+                
+                // Text input view - pass isProcessingPrompt to handle thinking state
+                TextInputView(
+                    promptText: $promptText,
+                    onSend: {
+                        Task {
+                            await viewModel.processPrompt(promptText)
+                            promptText = ""
+                        }
+                    },
+                    isProcessing: viewModel.isProcessingPrompt
+                )
+                .padding(.bottom, 25)
+                .tag(1)
+            }
+            .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+            
+            // Navigation hint label with improved positioning
+            HStack {
+                if selectedTab == 1 {
+                    // Show "← Swipe for Voice" when on text input
+                    HStack(spacing: 3) {
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 9))
+                        Text("Swipe for Voice")
+                            .font(.system(size: 10))
+                    }
+                    .foregroundColor(.secondary)
+                    .padding(.leading, 10)
+                    .padding(.bottom, 5)
+                }
+                
+                Spacer()
+                
+                if selectedTab == 0 {
+                    // Show "Swipe for Type →" when on speech button
+                    HStack(spacing: 3) {
+                        Text("Swipe for Type")
+                            .font(.system(size: 10))
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 9))
+                    }
+                    .foregroundColor(.secondary)
+                    .padding(.trailing, 10)
+                    .padding(.bottom, 5)
+                }
+            }
+        }
+        // Maintain increased height for components
+        .frame(height: 100)
+        .onChange(of: selectedTab) { _, newValue in
+            viewModel.isTextInputMode = newValue == 1
         }
     }
 }
@@ -158,17 +280,9 @@ struct MetronomeView: View {
             .padding()
             
             Spacer()
-            SpeechButton(
-                isRecording: viewModel.transcriber.isRecording,
-                rmsValue: viewModel.transcriber.rmsValue,
-                isProcessing: viewModel.isProcessingPrompt,
-                supportsThinkingState: true,
-                onTap: {
-                    Task {
-                        await viewModel.toggleTranscription()
-                    }
-                }
-            )
+                       
+            // Replace the SpeechButton with the InputSwitcherView
+            InputSwitcherView(viewModel: viewModel)
         }
         .padding()
         .onAppear {
@@ -181,4 +295,8 @@ struct MetronomeView: View {
             viewModel.metronome.stop()
         }
     }
+}
+
+#Preview("Metronome View") {
+    MetronomeView(compiler: CompilerManager())
 }
