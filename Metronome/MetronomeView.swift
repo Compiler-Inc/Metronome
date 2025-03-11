@@ -67,15 +67,12 @@ final class MetronomeViewModel {
     }
     
     @MainActor
-    func processTranscribedText(_ text: String) async {
+    func processPrompt(_ text: String) async {
         // Skip processing if text is empty
         guard !text.isEmpty else { return }
-        
-        // This is where you'll implement your processing logic
-        print("Processing transcribed text: \(text)")
 
         do {
-            let functions = try await compiler.processVoicePrompt(text)
+            let functions = try await compiler.getFunctions(for: text)
             
             for function in functions {
                 conductor.execute(function: function)
@@ -103,7 +100,7 @@ final class MetronomeViewModel {
         
         // Process the text
         if !transcribedText.isEmpty {
-            await processTranscribedText(transcribedText)
+            await processPrompt(transcribedText)
         }
     }
 }

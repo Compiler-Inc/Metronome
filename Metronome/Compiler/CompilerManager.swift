@@ -11,7 +11,6 @@ class CompilerManager {
     var isAuthenticated = false
     var errorMessage: String?
     var isCheckingAuth = true
-    var lastTranscribedText: String = ""
     
     /// Our service that talks to the backend
     let client: CompilerClient
@@ -44,35 +43,24 @@ extension CompilerManager {
     /// Process a voice prompt and return the resulting compiler functions
     /// - Parameter prompt: The transcribed text from the voice input
     /// - Returns: An array of parsed CompilerFunction objects
-    func processVoicePrompt(_ prompt: String) async throws -> [CompilerFunction] {
-        // Save the last transcribed text
-        lastTranscribedText = prompt
+    func getFunctions(for prompt: String) async throws -> [CompilerFunction] {
         
-        // Process the prompt with the backend service
-        let functions: [Function<MetronomeParameters>] = try await client.processFunction(
+        // Process the prompt with the backend service and convert to CompilerFunction enums
+        let compilerFunctions: [CompilerFunction] = try await client.processFunction(
             prompt: prompt,
             for: MetronomeState(bpm: 120)
         )
         
-        print("🤖 Received \(functions.count) functions from backend")
+        print("🤖 Received \(compilerFunctions.count) functions from backend")
         
-        // Parse raw functions into our domain-specific CompilerFunction enum
+        // No need to parse raw functions anymore since we're directly decoding to CompilerFunction
         // Add debug logging for each function
-        let compilerFunctions = functions.compactMap { function -> CompilerFunction? in
-            print("🎯 Parsing function: \(function)")
-            
-            guard let parsedFunction = CompilerFunction.from(function) else {
-                print("❌ Failed to parse function: \(function)")
-                return nil
-            }
-            
-            print("✅ Successfully parsed function: \(parsedFunction)")
-            return parsedFunction
+        compilerFunctions.forEach { function in
+            print("✅ Received function: \(function)")
         }
         
-        print("🎮 Successfully parsed \(compilerFunctions.count) of \(functions.count) functions")
-        
         return compilerFunctions
+    
     }
 }
 
