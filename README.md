@@ -1,6 +1,8 @@
 # Metronome
 
-An AI-powered musical metronome application.
+An AI-powered musical metronome application. See it in action: 
+
+https://github.com/user-attachments/assets/0ca4dd9c-5a09-4453-aeb1-1491a2e4b39e
 
 ## Setup Instructions
 
