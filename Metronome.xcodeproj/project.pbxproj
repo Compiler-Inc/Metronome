@@ -656,7 +656,7 @@
 			repositoryURL = "https://github.com/Compiler-Inc/CompilerSwiftAI";
 			requirement = {
 				kind = exactVersion;
-				version = 0.0.7;
+				version = 0.1.1;
 			};
 		};
 		6B38582A2D7F655C003DFE48 /* XCRemoteSwiftPackageReference "AudioKitUI" */ = {

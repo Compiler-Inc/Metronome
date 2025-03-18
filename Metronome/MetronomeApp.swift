@@ -33,7 +33,8 @@ struct MetronomeApp: App {
                         onCompletion: { result in
                             Task {
                                 do {
-                                    compiler.isAuthenticated = try await compiler.client.handleSignInWithApple(result, nonce: currentNonce)
+                                    try await compiler.client.handleSignInWithApple(result, nonce: currentNonce)
+                                    compiler.isAuthenticated = true
                                 } catch {
                                     compiler.errorMessage = error.localizedDescription
                                 }

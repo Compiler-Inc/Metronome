@@ -45,7 +45,7 @@ final class MetronomeViewModel {
                 conductor.execute(function: function)
                 
                 // Add the function's colloquial description
-                functionDescriptions.append(function.colloquialDescription)
+                functionDescriptions.append(function.colloquialResponse)
             }
             
             // Show notification if we have any function descriptions
@@ -152,7 +152,7 @@ extension MetronomeViewModel {
     }
 }
 
-struct CompilerMetronomeState: AppStateProtocol {
+struct CompilerMetronomeState: Encodable & Sendable {
     let bpm: Double
     let timeSignatureTop: Int
     let isPlaying: Bool
