@@ -10,6 +10,7 @@
 		290B2CEB2D2A03D300F52581 /* CompilerSwiftAI in Frameworks */ = {isa = PBXBuildFile; productRef = 290B2CEA2D2A03D300F52581 /* CompilerSwiftAI */; };
 		6B38582C2D7F655C003DFE48 /* AudioKitUI in Frameworks */ = {isa = PBXBuildFile; productRef = 6B38582B2D7F655C003DFE48 /* AudioKitUI */; };
 		6B38582F2D7F6598003DFE48 /* STKAudioKit in Frameworks */ = {isa = PBXBuildFile; productRef = 6B38582E2D7F6598003DFE48 /* STKAudioKit */; };
+		C4D507042D8CDD550055FAEF /* CompilerHelper in Frameworks */ = {isa = PBXBuildFile; productRef = C4D507032D8CDD550055FAEF /* CompilerHelper */; };
 		F181AA312D0A4A94006E3941 /* SoundpipeAudioKit in Frameworks */ = {isa = PBXBuildFile; productRef = F181AA302D0A4A94006E3941 /* SoundpipeAudioKit */; };
 /* End PBXBuildFile section */
 
@@ -74,6 +75,7 @@
 			files = (
 				F181AA312D0A4A94006E3941 /* SoundpipeAudioKit in Frameworks */,
 				6B38582C2D7F655C003DFE48 /* AudioKitUI in Frameworks */,
+				C4D507042D8CDD550055FAEF /* CompilerHelper in Frameworks */,
 				290B2CEB2D2A03D300F52581 /* CompilerSwiftAI in Frameworks */,
 				6B38582F2D7F6598003DFE48 /* STKAudioKit in Frameworks */,
 			);
@@ -148,6 +150,7 @@
 				290B2CEA2D2A03D300F52581 /* CompilerSwiftAI */,
 				6B38582B2D7F655C003DFE48 /* AudioKitUI */,
 				6B38582E2D7F6598003DFE48 /* STKAudioKit */,
+				C4D507032D8CDD550055FAEF /* CompilerHelper */,
 			);
 			productName = Metronome;
 			productReference = F181A9FB2D093CED006E3941 /* Metronome.app */;
@@ -236,6 +239,7 @@
 				290B2CE92D2A03D300F52581 /* XCRemoteSwiftPackageReference "CompilerSwiftAI" */,
 				6B38582A2D7F655C003DFE48 /* XCRemoteSwiftPackageReference "AudioKitUI" */,
 				6B38582D2D7F6598003DFE48 /* XCRemoteSwiftPackageReference "STKAudioKit" */,
+				C4D507022D8CDD550055FAEF /* XCRemoteSwiftPackageReference "CompilerHelper" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = F181A9FC2D093CED006E3941 /* Products */;
@@ -675,6 +679,14 @@
 				minimumVersion = 5.5.4;
 			};
 		};
+		C4D507022D8CDD550055FAEF /* XCRemoteSwiftPackageReference "CompilerHelper" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Compiler-Inc/CompilerHelper";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.0.1;
+			};
+		};
 		F181AA2E2D093D72006E3941 /* XCRemoteSwiftPackageReference "SoundpipeAudioKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/AudioKit/SoundpipeAudioKit.git";
@@ -700,6 +712,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 6B38582D2D7F6598003DFE48 /* XCRemoteSwiftPackageReference "STKAudioKit" */;
 			productName = STKAudioKit;
+		};
+		C4D507032D8CDD550055FAEF /* CompilerHelper */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C4D507022D8CDD550055FAEF /* XCRemoteSwiftPackageReference "CompilerHelper" */;
+			productName = CompilerHelper;
 		};
 		F181AA302D0A4A94006E3941 /* SoundpipeAudioKit */ = {
 			isa = XCSwiftPackageProductDependency;

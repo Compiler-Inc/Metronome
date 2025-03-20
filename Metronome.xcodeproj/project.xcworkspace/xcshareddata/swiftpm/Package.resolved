@@ -1,5 +1,5 @@
 {
-  "originHash" : "343bd9ec6c6b32e8eb11f62a71636438a415c08befd889586d41fdc50ae28111",
+  "originHash" : "4dceac1caa7842ac7ad42faa275fe81b8e1a7b5d0f0d01f15c228393b9fb31cd",
   "pins" : [
     {
       "identity" : "audiokit",
@@ -26,6 +26,15 @@
       "state" : {
         "revision" : "1a61e8a96c7ee24c3e5abe06dc3334a31fd7571d",
         "version" : "0.3.7"
+      }
+    },
+    {
+      "identity" : "compilerhelper",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Compiler-Inc/CompilerHelper",
+      "state" : {
+        "revision" : "65529f6b0517ef892fa3edc3ad66267a48fed133",
+        "version" : "0.0.1"
       }
     },
     {
@@ -98,6 +107,15 @@
       "state" : {
         "revision" : "5f613358148239d0292c0cef674a3c2314737f9e",
         "version" : "2.4.1"
+      }
+    },
+    {
+      "identity" : "swift-syntax",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/swiftlang/swift-syntax.git",
+      "state" : {
+        "revision" : "0687f71944021d616d34d922343dcef086855920",
+        "version" : "600.0.1"
       }
     },
     {
