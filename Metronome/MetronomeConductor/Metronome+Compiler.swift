@@ -25,7 +25,7 @@ extension MetronomeConductor {
             guard let params = function.parameters,
                   let sound = GiantSound.allCases.first(where: { $0.description == params.sound })
             else { return }
-            self.data.note = MIDINoteNumber(sound.rawValue)
+            data.note = MIDINoteNumber(sound.rawValue)
             
         case .setDownBeat(let function):
             guard let params = function.parameters,
